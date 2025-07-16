@@ -13,7 +13,7 @@ We'll walk you through a simple copy-paste Node.js script. No complex setup, jus
 
 ## What You'll Need
 
-*   **A CoinPaprika API Key**: If you don’t have one, get it from the [CoinPaprika API page](https://coinpaprika.com/api/).
+*   **A CoinPaprika API Key**: If you don't have one, get it from the [CoinPaprika API page](https://coinpaprika.com/api/panel/).
 *   **Node.js**: If you don't have it installed, download it from the [official Node.js website](https://nodejs.org/).
 
 ## Step 1: Set Up Your Project (1 Minute)
@@ -39,6 +39,29 @@ Finally, install the `ws` library to handle the WebSocket connection.
 ```bash
 npm install ws
 ```
+
+### Enable ES6 Modules (Important!)
+To avoid warnings and ensure smooth operation, edit your `package.json` file and add `"type": "module"`:
+
+```json
+{
+  "name": "coinpaprika-5min-stream",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "ws": "^8.14.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
+```
 </Steps>
 
 ## Step 2: Create and Run the Client (4 Minutes)
@@ -57,6 +80,7 @@ const API_KEY = "YOUR_API_KEY";
 const WS_URL = "wss://streaming.coinpaprika.com/ticks";
 
 console.log("--- CoinPaprika 5-Minute Ticker ---");
+console.log("Starting connection to streaming API...");
 
 // --- WebSocket Connection ---
 try {
@@ -90,6 +114,8 @@ try {
     };
 
     ws.send(JSON.stringify(subscribePayload));
+    console.log("Subscribed to Bitcoin and Ethereum tickers");
+    console.log("Waiting for live price updates...\n");
   });
 
   // 2. When the server sends a ping, reset the heartbeat timeout.
@@ -101,23 +127,46 @@ try {
 
   // 3. When a message is received, log it to the console.
   ws.on("message", (data) => {
-    const message = JSON.parse(data.toString());
-    console.log("Received ticker update:", message);
+    try {
+      const message = JSON.parse(data.toString());
+      
+      // Format the output to be more readable
+      const price = message.quotes?.USD?.p;
+      const volume = message.quotes?.USD?.v24h;
+      const marketCap = message.quotes?.USD?.m;
+      
+      console.log(`📊 ${message.sym} (${message.id}):`);
+      console.log(`   💲 Price: $${price?.toLocaleString() || 'N/A'}`);
+      console.log(`   📈 24h Volume: $${volume?.toLocaleString() || 'N/A'}`);
+      console.log(`   🏦 Market Cap: $${marketCap?.toLocaleString() || 'N/A'}`);
+      console.log(`   🕐 Timestamp: ${new Date(message.ts * 1000).toLocaleString()}\n`);
+      
+    } catch (error) {
+      console.error("Failed to parse message:", error);
+    }
   });
 
   // 4. When the connection closes, clean up the timeout.
-  ws.on("close", () => {
-    console.log("Connection closed.");
+  ws.on("close", (code, reason) => {
+    console.log(`🔌 Connection closed with code ${code}: ${reason || 'No reason provided'}`);
     clearTimeout(pingTimeout);
   });
 
   // 5. Handle any errors that occur.
   ws.on("error", (err) => {
-    console.error("A WebSocket error occurred:", err);
+    console.error("A WebSocket error occurred:", err.message);
+  });
+
+  // 6. Graceful shutdown on Ctrl+C
+  process.on('SIGINT', () => {
+    console.log('\nGracefully shutting down...');
+    ws.close();
+    process.exit(0);
   });
 
 } catch (e) {
-  console.error("Failed to create WebSocket connection:", e);
+  console.error("Failed to create WebSocket connection:", e.message);
+  process.exit(1);
 }
 ```
 
@@ -133,12 +182,46 @@ You should immediately see output as the connection is made and data starts stre
 
 ```
 --- CoinPaprika 5-Minute Ticker ---
+🚀 Starting connection to streaming API...
 ✅ Connection established. Subscribing to tickers...
-Received ticker update: { id: 'btc-bitcoin', sym: 'BTC', ... }
-Received ticker update: { id: 'eth-ethereum', sym: 'ETH', ... }
+📡 Subscribed to Bitcoin and Ethereum tickers
+💰 Waiting for live price updates...
+
+📊 BTC (btc-bitcoin):
+   💲 Price: $118,625
+   📈 24h Volume: $42,480,897,345
+   🏦 Market Cap: $2,359,846,639,027
+   🕐 Timestamp: 7/16/2025, 4:09:40 PM
+
+📊 ETH (eth-ethereum):
+   💲 Price: $3,191
+   📈 24h Volume: $28,987,190,950
+   🏦 Market Cap: $384,299,955,255
+   🕐 Timestamp: 7/16/2025, 4:09:40 PM
 ```
 
-And that's it! In just a few minutes, you've gone from an empty folder to a live stream of cryptocurrency data. You now have a working foundation to build any real-time application.
+**To stop the stream**, simply press `Ctrl+C` in your terminal.
+
+## What Just Happened?
+
+Congratulations! 🎉 You've successfully:
+
+1. **Connected** to the CoinPaprika Streaming API
+2. **Authenticated** using your API key
+3. **Subscribed** to Bitcoin and Ethereum price feeds
+4. **Received** real-time market data
+
+The stream will continue indefinitely, updating you whenever there are price changes on these cryptocurrencies.
+
+## Understanding the Code
+
+Let's break down the key parts:
+
+- **WebSocket Connection**: Creates a persistent connection to receive real-time data
+- **Heartbeat**: Monitors connection health and reconnects if needed
+- **Event Handlers**: Respond to different connection states (open, message, close, error)
+- **Data Parsing**: Safely parses incoming JSON messages with error handling
+- **Graceful Shutdown**: Properly closes the connection when you stop the program
 
 ## Next Steps
 
@@ -148,5 +231,15 @@ This tutorial provides a solid foundation. Here are a few ideas for expanding yo
 *   **Build a UI**: Create a web-based dashboard to visualize the price changes in real time.
 *   **Add More Currencies**: Modify the `subscribePayload` to include other cryptocurrencies you're interested in.
 *   **Implement Reconnection Logic**: Enhance the script to automatically reconnect if the connection is lost.
+*   **Add Alerts**: Set up price alerts when certain thresholds are met.
+*   **Calculate Changes**: Track price changes and display percentage movements.
+
+## Troubleshooting
+
+**Common Issues:**
+
+- **Module Error**: Make sure you added `"type": "module"` to your `package.json`
+- **Connection Failed**: Check your API key and internet connection
+- **No Data**: Verify the currency IDs are correct (e.g., `"btc-bitcoin"`, `"eth-ethereum"`)
 
 Happy coding! 
