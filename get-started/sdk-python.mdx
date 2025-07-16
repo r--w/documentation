@@ -1,0 +1,282 @@
+---
+title: "Python SDK"
+description: "Official CoinPaprika API Python client library"
+---
+
+# CoinPaprika Python SDK
+
+The official Python client library for the CoinPaprika API provides convenient access to cryptocurrency market data.
+
+## Installation
+
+Install the CoinPaprika Python SDK using pip:
+
+```bash
+pip install coinpaprika-sdk
+```
+
+## Quick Start
+
+### Free Plan
+
+For basic usage with the free API plan:
+
+```python
+from coinpaprika.client import Client
+
+# Initialize the client
+client = Client()
+
+# Get global market data
+global_data = client.global_market()
+print(f"Total market cap: ${global_data['market_cap_usd']:,.0f}")
+print(f"24h volume: ${global_data['volume_24h_usd']:,.0f}")
+
+# Get detailed coin information for Bitcoin
+btc_data = client.coin("btc-bitcoin")
+print(f"Bitcoin: {btc_data['name']} ({btc_data['symbol']})")
+```
+
+### Pro Plan
+
+To access Pro features and higher rate limits, initialize the client with your API key.
+
+```python
+from coinpaprika.client import Client
+
+# Initialize client with an API key
+client = Client(api_key="YOUR-API-KEY")
+
+# Now you can access Pro features, such as historical ticker data
+historical_tickers = client.historical(
+    "btc-bitcoin",
+    start="2023-01-01T00:00:00Z",
+    end="2023-01-07T00:00:00Z"
+)
+print(f"Retrieved {len(historical_tickers)} historical tickers for Bitcoin.")
+```
+
+<Note>
+Get your API key at [coinpaprika.com/api](https://coinpaprika.com/api/)
+</Note>
+
+## Common Use Cases
+
+### Getting Market Data
+
+```python
+from coinpaprika.client import Client
+
+client = Client()
+
+# Get global market overview
+global_data = client.global_market()
+print(f"Total market cap: ${global_data['market_cap_usd']:,.0f}")
+print(f"Bitcoin dominance: {global_data['bitcoin_dominance_percentage']:.1f}%")
+
+# Get all tickers
+tickers = client.tickers()
+print("\nTop 5 cryptocurrencies:")
+for ticker in tickers[:5]:
+    name = ticker.get('name', 'N/A')
+    symbol = ticker.get('symbol', 'N/A')
+    price = ticker.get('quotes', {}).get('USD', {}).get('price', 0)
+    print(f"{name} ({symbol}): ${price:.2f}")
+```
+
+### Coin Information
+
+```python
+from coinpaprika.client import Client
+
+client = Client()
+
+# Get detailed coin information
+coin = client.coin("eth-ethereum")
+print(f"Name: {coin['name']}")
+print(f"Symbol: {coin['symbol']}")
+print(f"Active: {coin['is_active']}")
+
+# Get coin markets
+markets = client.markets("eth-ethereum", quotes="USD")
+print(f"Trading on {len(markets)} markets")
+
+# Get a specific coin's ticker data
+ticker = client.ticker("eth-ethereum")
+usd_quote = ticker['quotes']['USD']
+print(f"Price: ${usd_quote['price']:.2f}")
+```
+
+### Historical Data
+
+The primary method for fetching historical OHLCV data is `ohlcv()`. Using an API key is required for most historical data access.
+
+```python
+from coinpaprika.client import Client
+from coinpaprika.exceptions import CoinpaprikaAPIException
+
+# Pro client with API key is required for historical data
+client = Client(api_key="YOUR-API-KEY")
+
+try:
+    # Get historical OHLCV data
+    historical_data = client.ohlcv(
+        "btc-bitcoin", 
+        start="2023-01-01T00:00:00Z",
+        end="2023-01-07T00:00:00Z"
+    )
+
+    print("Bitcoin OHLCV Data (First week of 2023):")
+    for day in historical_data:
+        price = day['close']
+        volume = day['volume']
+        print(f"Date: {day['time_open'][:10]}, Close: ${price:.2f}, Volume: ${volume:,.0f}")
+
+except CoinpaprikaAPIException as e:
+    print(f"Error fetching historical data: {e}")
+
+```
+
+### Exchange Data
+
+```python
+from coinpaprika.client import Client
+
+client = Client()
+
+# Get all exchanges
+exchanges = client.exchange_list()
+print(f"Found {len(exchanges)} exchanges")
+
+# Get specific exchange data
+binance = client.exchange("binance", quotes="USD")
+print(f"\nBinance:")
+print(f"- Name: {binance['name']}")
+if 'quotes' in binance and 'USD' in binance['quotes']:
+    volume = binance['quotes']['USD']['reported_volume_24h']
+    print(f"- 24h Volume: ${volume:,.0f}")
+
+# Get exchange markets
+markets = client.exchange_markets("binance", quotes="USD")
+print(f"Binance has {len(markets)} trading pairs")
+```
+
+### Search and Price Conversion
+
+```python
+from coinpaprika.client import Client
+
+client = Client()
+
+# Search for cryptocurrencies, exchanges, people, and tags
+results = client.search(
+    q="bitcoin",
+    c="currencies,exchanges",
+    limit=5
+)
+
+print("Search results for 'bitcoin':")
+if 'currencies' in results:
+    for currency in results['currencies']:
+        print(f"- {currency['name']} ({currency['symbol']})")
+
+# Convert Bitcoin to Ethereum
+btc_to_eth = client.price_converter(
+    base_currency_id="btc-bitcoin",
+    quote_currency_id="eth-ethereum",
+    amount=1
+)
+print(f"\n1 BTC = {btc_to_eth['price']:.6f} ETH")
+```
+
+### People and Tags
+
+```python
+from coinpaprika.client import Client
+
+client = Client()
+
+# Get person information
+person = client.people("vitalik-buterin")
+print(f"Name: {person['name']}")
+
+# Get all tags (sorted by name)
+tags = client.tags(sort_by="name")
+print(f"Found {len(tags)} tags")
+
+# Get a specific tag
+blockchain_tag = client.tag("blockchain-service")
+print(f"Tag: {blockchain_tag['name']}")
+```
+
+## Error Handling
+
+The client raises specific exceptions for different HTTP error codes. It is best practice to catch these specific exceptions.
+
+```python
+from coinpaprika.client import Client
+from coinpaprika.exceptions import CoinpaprikaAPINotFoundException, CoinpaprikaAPITooManyRequestsException, CoinpaprikaAPIException
+
+client = Client()
+
+try:
+    # This will fail because the coin ID does not exist
+    coin = client.coin("invalid-coin-id")
+    print(f"Coin: {coin['name']}")
+
+except CoinpaprikaAPINotFoundException as e:
+    print(f"Coin not found: {e}")
+
+except CoinpaprikaAPITooManyRequestsException as e:
+    print(f"Rate limit exceeded: {e}")
+
+except CoinpaprikaAPIException as e:
+    # Handle other generic API errors
+    print(f"API Error: {e}")
+```
+
+## Available Methods
+
+### Global Data
+- [`global_market()`](/api-reference/global/get-market-overview-data) - Get global market overview.
+
+### Coins
+- [`coins()`](/api-reference/coins/list-coins) - List all coins.
+- [`coin(coin_id)`](/api-reference/coins/get-coin-by-id) - Get details for a specific coin.
+- [`twitter(coin_id)`](/api-reference/coins/get-twitter-timeline-tweets-for-a-coin) - Get a coin's Twitter timeline.
+- [`events(coin_id)`](/api-reference/coins/get-coin-events-by-coin-id) - Get a coin's events.
+- [`exchanges(coin_id)`](/api-reference/coins/get-exchanges-by-coin-id) - Get exchanges for a specific coin.
+- [`markets(coin_id, **params)`](/api-reference/coins/get-markets-by-coin-id) - Get market data for a specific coin.
+- [`candle(coin_id, **params)`](/api-reference/coins/get-ohlc-for-the-last-full-day) - Get the latest OHLCV data for a coin.
+- [`historical(coin_id, **params)`](/api-reference/coins/get-historical-ohlc) - Get historical OHLCV data.
+- [`today(coin_id)`](/api-reference/coins/get-today-ohlc) - Get today's OHLC data.
+
+### People
+- [`people(person_id)`](/api-reference/people/get-person-by-id) - Get person by ID.
+
+### Tags
+- [`tags(sort_by)`](/api-reference/tags/list-tags) - List tags.
+- [`tag(tag_id)`](/api-reference/tags/get-tag-by-id) - Get tag by ID.
+
+### Tickers
+- [`tickers()`](/api-reference/tickers/get-tickers-for-all-active-coins) - Get tickers for all coins.
+- [`ticker(coin_id)`](/api-reference/tickers/get-ticker-for-a-specific-coin) - Get ticker for a specific coin.
+- [`historical_ticker(coin_id, **params)`](/api-reference/tickers/get-historical-ticks-for-a-specific-coin) - Get historical ticks.
+
+### Exchanges
+- [`exchange_list()`](/api-reference/exchanges/list-exchanges) - List all exchanges.
+- [`exchange(exchange_id, **params)`](/api-reference/exchanges/get-exchange-by-id) - Get a specific exchange.
+- [`exchange_markets(exchange_id, **params)`](/api-reference/exchanges/list-an-exchange-markets) - Get exchange markets.
+
+### Tools
+- [`search(q, **params)`](/api-reference/tools/search) - Search for coins, exchanges, etc.
+- [`price_converter(**params)`](/api-reference/tools/price-converter) - Convert between currencies.
+
+## Requirements
+
+- Python >= 3.7
+- `requests` library
+
+## License
+
+This library is available under the Apache License 2.0. See the [LICENSE file](https://github.com/coinpaprika/coinpaprika-api-python-client/blob/main/LICENSE) for more info. 

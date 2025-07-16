@@ -1,0 +1,252 @@
+---
+title: "Swift SDK"
+description: "Official CoinPaprika API Swift client library"
+---
+
+# CoinPaprika Swift SDK
+
+The official Swift client library for the CoinPaprika API provides convenient, static access to cryptocurrency market data.
+
+## Installation
+
+### Swift Package Manager (SPM)
+
+Add the following package dependency to your `Package.swift` file or via Xcode:
+
+```
+https://github.com/coinpaprika/coinpaprika-api-swift-client
+```
+
+### CocoaPods
+
+Add the following line to your Podfile and run `pod install`:
+
+```ruby
+pod 'CoinpaprikaAPI'
+```
+
+## Quick Start
+
+First, import the library:
+```swift
+import Coinpaprika
+```
+
+Then, you can call any API endpoint via the static `Coinpaprika.API` object. All requests are asynchronous and return a `Result` type in a closure.
+
+```swift
+// Get global market stats
+Coinpaprika.API.global().perform { result in
+    switch result {
+    case .success(let stats):
+        print("Market Cap: $\(stats.marketCapUsd)")
+        print("24h Volume: $\(stats.volume24hUsd)")
+        print("Bitcoin Dominance: \(stats.bitcoinDominancePercentage)%")
+    case .failure(let error):
+        print("An error occurred: \(error)")
+    }
+}
+```
+
+## Using the Pro API
+
+To use the Pro API, you must manually change the base URL in the `Configuration` object before making any requests. This should be done once when your app launches.
+
+```swift
+import Coinpaprika
+
+// Set the base URL to the Pro endpoint
+Coinpaprika.Configuration.baseUrl = URL(string: "https://api-pro.coinpaprika.com/v1/")!
+
+// Now all subsequent requests will use the Pro API
+Coinpaprika.API.tickers().perform { result in
+    // Pro plan provides access to all tickers
+    if case .success(let tickers) = result {
+        print("Successfully fetched \(tickers.count) tickers using the Pro API.")
+    }
+}
+```
+
+## Common Use Cases
+
+### Ticker Data for a Specific Coin
+
+```swift
+import Coinpaprika
+
+Coinpaprika.API.ticker(id: "btc-bitcoin", quotes: [.usd, .btc]).perform { response in
+    switch response {
+    case .success(let ticker):
+        print("Bitcoin Information:")
+        print("Name: \(ticker.name)")
+        print("Symbol: \(ticker.symbol)")
+        
+        // Access quotes using subscripting
+        if let usdQuote = ticker[.usd] {
+            print("USD Price: $\(usdQuote.price)")
+            print("Market Cap: $\(usdQuote.marketCap)")
+        }
+        
+        if let btcQuote = ticker[.btc] {
+            print("BTC Price: ₿\(btcQuote.price)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+}
+```
+
+### Coin Details
+
+```swift
+import Coinpaprika
+
+Coinpaprika.API.coin(id: "eth-ethereum").perform { response in
+    switch response {
+    case .success(let coin):
+        print("Ethereum Details:")
+        print("Name: \(coin.name)")
+        print("Description: \(coin.description ?? "N/A")")
+        print("Development Status: \(coin.developmentStatus)")
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+}
+```
+
+### Historical Ticker Data
+
+Note: Accessing historical data requires using the Pro API.
+
+```swift
+import Coinpaprika
+
+// Ensure Pro API is configured
+Coinpaprika.Configuration.baseUrl = URL(string: "https://api-pro.coinpaprika.com/v1/")!
+
+let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
+
+Coinpaprika.API.historicalTicks(
+    id: "btc-bitcoin",
+    start: sevenDaysAgo,
+    limit: 100,
+    quote: .usd
+).perform { response in
+    switch response {
+    case .success(let ticks):
+        print("Recent Historical Ticks for Bitcoin:")
+        ticks.forEach { tick in
+            print("[\(tick.timestamp)] Price: $\(tick.price), Volume: \(tick.volume24h)")
+        }
+    case .failure(let error):
+        print("Error fetching historical ticks: \(error)")
+    }
+}
+```
+
+### Search
+
+```swift
+import Coinpaprika
+
+Coinpaprika.API.search(
+    query: "proof-of-work",
+    categories: [.tags]
+).perform { response in
+    switch response {
+    case .success(let searchResults):
+        print("Found \(searchResults.tags.count) tags for 'proof-of-work'")
+        searchResults.tags.forEach { tag in
+            print("- \(tag.name) (Coin count: \(tag.coinCounter))")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+}
+```
+
+## Error Handling
+
+The `Result` object in the completion handler provides a detailed `RequestError` case for failures.
+
+```swift
+import Coinpaprika
+
+Coinpaprika.API.coin(id: "invalid-coin-id").perform { response in
+    if case .failure(let error) = response {
+        switch error {
+        case .networkError(let underlyingError):
+            print("Network error: \(underlyingError.localizedDescription)")
+        case .decodingError(let underlyingError):
+            print("Decoding error: \(underlyingError)")
+        case .httpError(let statusCode, let data):
+            let errorBody = String(data: data, encoding: .utf8) ?? "No response body"
+            print("HTTP error \(statusCode): \(errorBody)")
+        case .unknown:
+            print("An unknown error occurred.")
+        }
+    }
+}
+```
+
+## Async/Await Support (iOS 13+ / macOS 10.15+)
+
+The SDK supports modern concurrency with `async/await`.
+
+```swift
+import Coinpaprika
+
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+func getMarketData() async {
+    do {
+        let globalStats = try await Coinpaprika.API.global().async()
+        print("Market Cap: $\(globalStats.marketCapUsd)")
+        
+        let tickers = try await Coinpaprika.API.tickers(quotes: [.usd]).async()
+        print("Retrieved \(tickers.count) tickers")
+    } catch {
+        print("An error occurred: \(error)")
+    }
+}
+```
+
+## Available Methods
+
+### Global Data
+- [`global()`](/api-reference/global/get-market-overview-data) - Get global market overview.
+
+### Coins
+- [`coins(additionalFields:)`](/api-reference/coins/list-coins) - List all coins.
+- [`coin(id:)`](/api-reference/coins/get-coin-by-id) - Get coin by ID.
+- [`coinTwitter(id:)`](/api-reference/coins/get-twitter-timeline-tweets-for-a-coin) - Get a coin's Twitter timeline.
+- [`coinEvents(id:)`](/api-reference/coins/get-coin-events-by-coin-id) - Get coin events.
+- [`coinExchanges(id:)`](/api-reference/coins/get-exchanges-by-coin-id) - Get exchanges for a coin.
+- [`coinMarkets(id:quotes:)`](/api-reference/coins/get-markets-by-coin-id) - Get markets for a coin.
+
+### Tickers
+- [`tickers(quotes:page)`](/api-reference/tickers/get-tickers-for-all-active-coins) - Get all tickers, with optional pagination.
+- [`ticker(id:quotes:)`](/api-reference/tickers/get-ticker-for-a-specific-coin) - Get a specific ticker.
+- [`historicalTicks(...)`](/api-reference/tickers/get-historical-ticks-for-a-specific-coin) - Get historical tickers.
+
+### Exchanges
+- [`exchanges(quotes:)`](/api-reference/exchanges/list-exchanges) - List all exchanges.
+- [`exchange(id:quotes:)`](/api-reference/exchanges/get-exchange-by-id) - Get an exchange by ID.
+- [`exchangeMarkets(id:quotes:)`](/api-reference/exchanges/list-an-exchange-markets) - Get markets for an exchange.
+
+### People & Tags
+- [`person(id:)`](/api-reference/people/get-person-by-id) - Get a person by ID.
+- [`tags(additionalFields:)`](/api-reference/tags/list-tags) - List all tags.
+- [`tag(id:additionalFields:)`](/api-reference/tags/get-tag-by-id) - Get a tag by ID.
+
+### Search & Tools
+- [`search(...)`](/api-reference/tools/search) - Search across categories.
+- [`priceConverter(...)`](/api-reference/tools/price-converter) - Convert between currencies.
+
+## Requirements
+
+- iOS 10.0+ / macOS 10.12+ / watchOS 3.0+ / tvOS 10.0+
+- Swift 4.2+
+
+## License
+
+This library is available under the MIT license. See the [LICENSE file](https://github.com/coinpaprika/coinpaprika-api-swift-client/blob/master/LICENSE) for more info. 

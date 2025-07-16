@@ -1,0 +1,179 @@
+---
+title: "Kotlin SDK"
+description: "Official CoinPaprika API Kotlin/Android client building blocks"
+---
+
+# CoinPaprika Kotlin SDK
+
+The official Kotlin library for the CoinPaprika API provides a set of Retrofit interfaces and data models to access cryptocurrency market data. This allows for easy integration into any Android or Kotlin project that uses Retrofit for networking.
+
+This library provides the building blocks, not a pre-configured client. You are responsible for creating and configuring your own `Retrofit` instance.
+
+## Installation
+
+Add the library dependency to your module's `build.gradle` or `build.gradle.kts` file.
+
+```groovy
+// build.gradle
+implementation 'com.coinpaprika:apiclient:0.5.3'
+```
+
+You will also need to add dependencies for Retrofit, a JSON converter like Moshi, and an HTTP client like OkHttp if you haven't already.
+
+```groovy
+// build.gradle
+implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+implementation 'com.squareup.moshi:moshi-kotlin:1.12.0'
+implementation 'com.squareup.okhttp3:okhttp3:4.9.3'
+```
+
+Finally, ensure you have the `INTERNET` permission in your `AndroidManifest.xml`.
+
+```xml
+<uses-permission android:name="android.permission.INTERNET"/>
+```
+
+## Quick Start
+
+### 1. Create a Retrofit Instance
+
+First, configure and build a `Retrofit` instance. You must provide the base URL and a converter factory.
+
+```kotlin
+import com.coinpaprika.apiclient.BaseUrl
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
+
+object RetrofitClient {
+    private val moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
+
+    val instance: Retrofit = Retrofit.Builder()
+        .baseUrl(BaseUrl.API_ENDPOINT)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .build()
+}
+```
+
+### 2. Create a Service
+
+Use your Retrofit instance to create an implementation of one of the library's service interfaces, such as `TickersService`.
+
+```kotlin
+import com.coinpaprika.apiclient.TickersService
+
+val tickersService: TickersService = RetrofitClient.instance.create(TickersService::class.java)
+```
+
+### 3. Make an API Call
+
+Now you can use the service within a coroutine to make API calls.
+
+```kotlin
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+// In your Activity, ViewModel, or other component
+fun fetchTickers() {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            // Get tickers quoted in USD
+            val tickers = tickersService.getTickers(quotes = "USD")
+            
+            // Print the name and price of the first 5 tickers
+            tickers.take(5).forEach { ticker ->
+                val usdQuote = ticker.quotes?.get("USD")
+                println("${ticker.name}: $${usdQuote?.price}")
+            }
+        } catch (e: Exception) {
+            // Handle exceptions, e.g., network errors
+            println("An error occurred: ${e.message}")
+        }
+    }
+}
+```
+
+## Available Services
+
+This library provides the following Retrofit service interfaces.
+
+### CoinsService
+Used to fetch coin details and history.
+- [`getCoins()`](/api-reference/coins/list-coins): Lists all available coins.
+- [`getCoin(id)`](/api-reference/coins/get-coin-by-id): Retrieves details for a specific coin ID.
+- [`getCoinEvents(id)`](/api-reference/coins/get-coin-events-by-coin-id): Gets events related to a coin.
+- [`getCoinExchanges(id)`](/api-reference/coins/get-exchanges-by-coin-id): Gets exchanges where a coin is listed.
+- [`getCoinMarkets(id, quotes)`](/api-reference/coins/get-markets-by-coin-id): Gets market data for a coin.
+- [`getCoinTweets(id)`](/api-reference/coins/get-twitter-timeline-tweets-for-a-coin): Gets the latest tweets for a coin.
+- [`getCoinOHLCV(id, quotes)`](/api-reference/coins/get-ohlc-for-the-last-full-day): Gets the latest OHLCV data.
+- [`getHistoricalCoinOHLCV(...)`](/api-reference/coins/get-historical-ohlc): Gets historical OHLCV data.
+
+### ExchangesService
+Used to fetch data about exchanges.
+- [`getExchanges(quotes)`](/api-reference/exchanges/list-exchanges): Lists all exchanges.
+- [`getExchange(id, quotes)`](/api-reference/exchanges/get-exchange-by-id): Retrieves details for a specific exchange.
+- [`getExchangeMarkets(id, quotes)`](/api-reference/exchanges/list-an-exchange-markets): Gets all markets for a specific exchange.
+
+### GlobalStatsService
+Used to get global market data.
+- [`getGlobalStats(quotes)`](/api-reference/global/get-market-overview-data): Retrieves global cryptocurrency market statistics.
+
+### PeopleService
+Used to get information about people in the crypto space.
+- [`getPerson(id)`](/api-reference/people/get-person-by-id): Retrieves details for a specific person by ID.
+
+### SearchService
+Used to perform searches.
+- [`search(...)`](/api-reference/tools/search): Searches for coins, exchanges, people, and more.
+
+### TagsService
+Used to get information about tags.
+- [`getTags(sortBy)`](/api-reference/tags/list-tags): Lists all tags.
+- [`getTag(id)`](/api-reference/tags/get-tag-by-id): Retrieves details for a specific tag.
+
+### TickersService
+Used to fetch ticker price and market data.
+- [`getTicker(id, quotes)`](/api-reference/tickers/get-ticker-for-a-specific-coin): Retrieves the ticker for a specific coin ID.
+- [`getTickers(quotes, page)`](/api-reference/tickers/get-tickers-for-all-active-coins): Lists tickers for all coins.
+
+## Error Handling
+
+When using this library, you should wrap your API calls in a `try-catch` block to handle potential exceptions, such as `HttpException` from Retrofit for non-2xx responses or `IOException` for network failures.
+
+```kotlin
+import retrofit2.HttpException
+import java.io.IOException
+
+suspend fun fetchCoinData(coinId: String) {
+    val coinsService = RetrofitClient.instance.create(CoinsService::class.java)
+    try {
+        val coin = coinsService.getCoin(coinId)
+        println("Successfully fetched ${coin.name}")
+    } catch (e: HttpException) {
+        // Handle HTTP errors (e.g., 404 Not Found, 429 Too Many Requests)
+        println("HTTP Error: ${e.code()} - ${e.message()}")
+    } catch (e: IOException) {
+        // Handle network errors (e.g., no internet connection)
+        println("Network Error: ${e.message}")
+    } catch (e: Exception) {
+        // Handle other unexpected errors
+        println("An unknown error occurred: ${e.message}")
+    }
+}
+```
+
+## Requirements
+
+- Kotlin-enabled project (Android or pure Kotlin)
+- `retrofit2`
+- `moshi` (or another JSON converter)
+- `okhttp3`
+
+## License
+
+This library is available under the MIT license. See the [LICENSE file](https://github.com/coinpaprika/coinpaprika-api-kotlin-client/blob/master/LICENSE) for more info. 

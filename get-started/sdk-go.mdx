@@ -1,0 +1,429 @@
+---
+title: "Go SDK"
+description: "Official CoinPaprika API Go client library"
+---
+
+# CoinPaprika Go SDK
+
+The official Go client library for the CoinPaprika API provides convenient access to cryptocurrency market data, including coin prices, volumes, market caps, and more.
+
+## Installation
+
+Install the CoinPaprika Go SDK using go get:
+
+```bash
+go get github.com/coinpaprika/coinpaprika-api-go-client/v2/coinpaprika
+```
+
+## Quick Start
+
+### Basic Usage
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+
+    "github.com/coinpaprika/coinpaprika-api-go-client/v2/coinpaprika"
+)
+
+func main() {
+    // Initialize the client
+    client := coinpaprika.NewClient(nil)
+
+    // Get all tickers
+    tickers, err := client.Tickers.List(nil)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Display first 3 coins
+    for idx, ticker := range tickers {
+        if ticker.Name == nil || ticker.Symbol == nil || ticker.Rank == nil {
+            continue
+        }
+
+        fmt.Println("Name:", *ticker.Name)
+        fmt.Println("Symbol:", *ticker.Symbol)
+        fmt.Println("Rank:", *ticker.Rank)
+        
+        if quoteUSD, ok := ticker.Quotes["USD"]; ok && quoteUSD.Price != nil {
+            fmt.Printf("Price: %.2f USD\n\n", *quoteUSD.Price)
+        }
+
+        if idx >= 2 {
+            break
+        }
+    }
+}
+```
+
+### Using Custom HTTP Client
+
+```go
+package main
+
+import (
+    "fmt"
+    "net/http"
+    "time"
+
+    "github.com/coinpaprika/coinpaprika-api-go-client/v2/coinpaprika"
+)
+
+func main() {
+    // Create custom HTTP client with timeout
+    customClient := &http.Client{
+        Timeout: 10 * time.Second,
+    }
+
+    // Initialize CoinPaprika client with custom HTTP client
+    client := coinpaprika.NewClient(customClient)
+
+    // Get global market data
+    global, err := client.Global.Get()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Printf("Total market cap: $%.0f\n", *global.MarketCapUSD)
+    fmt.Printf("24h volume: $%.0f\n", *global.Volume24hUSD)
+}
+```
+
+### Pro API with API Key
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+
+    "github.com/coinpaprika/coinpaprika-api-go-client/v2/coinpaprika"
+)
+
+func main() {
+    // Initialize client with API key for Pro features
+    client := coinpaprika.NewClient(nil, coinpaprika.WithAPIKey("YOUR_API_KEY"))
+
+    // Get tickers with Pro features
+    tickers, err := client.Tickers.List(nil)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Printf("Retrieved %d tickers\n", len(tickers))
+}
+```
+
+<Note>
+Get your API key at [coinpaprika.com/api](https://coinpaprika.com/api/)
+</Note>
+
+## Common Use Cases
+
+### Getting Market Data
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+
+    "github.com/coinpaprika/coinpaprika-api-go-client/v2/coinpaprika"
+)
+
+func main() {
+    client := coinpaprika.NewClient(nil)
+
+    // Get global market overview
+    global, err := client.Global.Get()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Println("Global Market Data:")
+    if global.MarketCapUSD != nil {
+        fmt.Printf("- Market Cap: $%.0f\n", *global.MarketCapUSD)
+    }
+    if global.Volume24hUSD != nil {
+        fmt.Printf("- 24h Volume: $%.0f\n", *global.Volume24hUSD)
+    }
+    if global.CryptocurrenciesNumber != nil {
+        fmt.Printf("- Active Cryptocurrencies: %d\n", *global.CryptocurrenciesNumber)
+    }
+
+    // Get top 10 tickers
+    tickers, err := client.Tickers.List(nil)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Println("\nTop 10 Cryptocurrencies:")
+    for i, ticker := range tickers {
+        if i >= 10 {
+            break
+        }
+
+        if ticker.Name == nil || ticker.Symbol == nil || ticker.Rank == nil {
+            continue
+        }
+
+        var price float64
+        var change float64
+        if ticker.Quotes != nil && ticker.Quotes["USD"] != nil {
+            if ticker.Quotes["USD"].Price != nil {
+                price = *ticker.Quotes["USD"].Price
+            }
+            if ticker.Quotes["USD"].PercentChange24h != nil {
+                change = *ticker.Quotes["USD"].PercentChange24h
+            }
+        }
+
+        fmt.Printf("%d. %s (%s): $%.2f (%.2f%%)\n", 
+            *ticker.Rank, *ticker.Name, *ticker.Symbol, price, change)
+    }
+}
+```
+
+### Coin Information
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+
+    "github.com/coinpaprika/coinpaprika-api-go-client/v2/coinpaprika"
+)
+
+func main() {
+    client := coinpaprika.NewClient(nil)
+
+    // Get specific coin data
+    bitcoin, err := client.Coins.GetByID("btc-bitcoin")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Println("Bitcoin Information:")
+    if bitcoin.Name != nil {
+        fmt.Printf("- Name: %s\n", *bitcoin.Name)
+    }
+    if bitcoin.Symbol != nil {
+        fmt.Printf("- Symbol: %s\n", *bitcoin.Symbol)
+    }
+    if bitcoin.Rank != nil {
+        fmt.Printf("- Rank: %d\n", *bitcoin.Rank)
+    }
+
+    // Get Bitcoin markets
+    markets, err := client.Coins.GetMarketsByCoinID("btc-bitcoin")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Printf("Trading on %d markets\n", len(markets))
+}
+```
+
+### Historical Data
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "time"
+
+    "github.com/coinpaprika/coinpaprika-api-go-client/v2/coinpaprika"
+)
+
+func main() {
+    client := coinpaprika.NewClient(nil, coinpaprika.WithAPIKey("YOUR_API_KEY"))
+
+    // Get historical OHLCV data (Pro feature)
+    endTime := time.Now()
+    startTime := endTime.AddDate(0, 0, -7) // Last 7 days
+
+    ohlcv, err := client.Coins.GetHistoricalOHLCVByCoinID("btc-bitcoin", &coinpaprika.HistoricalOHLCVOptions{
+        Quote: "usd",
+        Start: startTime,
+        End:   endTime,
+    })
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Printf("Retrieved %d OHLCV data points for Bitcoin\n", len(ohlcv))
+    for _, data := range ohlcv[:3] { // Show first 3 days
+        fmt.Printf("Date: %s, Open: $%.2f, High: $%.2f, Low: $%.2f, Close: $%.2f\n",
+            data.TimeOpen.Format("2006-01-02"),
+            data.Open, data.High, data.Low, data.Close)
+    }
+}
+```
+
+### Search and Price Converter
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+
+    "github.com/coinpaprika/coinpaprika-api-go-client/v2/coinpaprika"
+)
+
+func main() {
+    client := coinpaprika.NewClient(nil)
+
+    // Search for cryptocurrencies
+    searchResults, err := client.Search.Search(&coinpaprika.SearchOptions{
+        Query:      "bitcoin",
+        Categories: "currencies",
+        Limit:      5,
+    })
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Printf("Found %d coins matching 'bitcoin'\n", len(searchResults.Currencies))
+    for _, coin := range searchResults.Currencies {
+        fmt.Printf("- %s (%s)\n", coin.Name, coin.Symbol)
+    }
+
+    // Price converter
+    conversion, err := client.PriceConverter.PriceConverter(&coinpaprika.PriceConverterOptions{
+        BaseCurrencyID:  "btc-bitcoin",
+        QuoteCurrencyID: "eth-ethereum",
+        Amount:          1,
+    })
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Printf("1 BTC = %.6f ETH\n", conversion.Price)
+}
+```
+
+## Error Handling
+
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+
+    "github.com/coinpaprika/coinpaprika-api-go-client/v2/coinpaprika"
+)
+
+func main() {
+    client := coinpaprika.NewClient(nil)
+
+    // Handle errors gracefully
+    coin, err := client.Coins.GetByID("invalid-coin-id")
+    if err != nil {
+        // The client returns a standard error, which may include the HTTP status code from the API.
+        log.Printf("An error occurred: %v", err)
+        return
+    }
+
+    fmt.Printf("Coin: %s\n", *coin.Name)
+}
+```
+
+## Advanced Usage
+
+### Rate Limiting
+
+The client does not automatically handle rate limiting. If you exceed the request limit for your plan, the API will return an error with an HTTP 429 "Too Many Requests" status code. Your application should handle these errors, for example by implementing a backoff-and-retry mechanism.
+
+### Custom Request Options
+
+```go
+package main
+
+import (
+	"log"
+
+	"github.com/coinpaprika/coinpaprika-api-go-client/v2/coinpaprika"
+)
+
+func main() {
+    client := coinpaprika.NewClient(nil)
+
+    // Get tickers with custom options
+    options := &coinpaprika.TickersOptions{
+        Quotes: "USD,BTC",
+    }
+
+    tickers, err := client.Tickers.List(options)
+    if err != nil {
+        panic(err)
+    }
+
+    // Process tickers...
+	log.Printf("Fetched %d tickers", len(tickers))
+}
+```
+
+## Available Methods
+
+The Go SDK is organized into services that correspond to the API endpoints.
+
+### Global
+- [`client.Global.Get()`](/api-reference/global/get-market-overview-data) - Get global market data.
+
+### Coins
+- [`client.Coins.List()`](/api-reference/coins/list-coins) - List all coins.
+- [`client.Coins.GetByID(coinID)`](/api-reference/coins/get-coin-by-id) - Get a specific coin by ID.
+- [`client.Coins.GetEventsByCoinID(coinID)`](/api-reference/coins/get-coin-events-by-coin-id) - Get events for a coin.
+- [`client.Coins.GetExchangesByCoinID(coinID)`](/api-reference/coins/get-exchanges-by-coin-id) - Get exchanges for a coin.
+- [`client.Coins.GetMarketsByCoinID(coinID)`](/api-reference/coins/get-markets-by-coin-id) - Get markets for a coin.
+- [`client.Coins.GetTwitterByCoinID(coinID)`](/api-reference/coins/get-twitter-timeline-tweets-for-a-coin) - Get Twitter timeline for a coin.
+- [`client.Coins.GetOHLCVLastFullDayByCoinID(coinID)`](/api-reference/coins/get-ohlc-for-the-last-full-day) - Get OHLCV for the last full day.
+- [`client.Coins.GetOHLCVHistorical(coinID, options)`](/api-reference/coins/get-historical-ohlc) - Get historical OHLCV.
+- [`client.Coins.GetOHLCVTodayByCoinID(coinID)`](/api-reference/coins/get-today-ohlc) - Get today's OHLCV.
+
+### People
+- [`client.People.GetByID(personID)`](/api-reference/people/get-person-by-id) - Get a person by ID.
+
+### Tags
+- [`client.Tags.List(options)`](/api-reference/tags/list-tags) - List all tags.
+- [`client.Tags.GetByID(tagID, options)`](/api-reference/tags/get-tag-by-id) - Get a tag by ID.
+
+### Tickers
+- [`client.Tickers.List(options)`](/api-reference/tickers/get-tickers-for-all-active-coins) - Get tickers for all coins.
+- [`client.Tickers.GetByCoinID(coinID, options)`](/api-reference/tickers/get-ticker-for-a-specific-coin) - Get ticker for a specific coin.
+- [`client.Tickers.GetHistoricalByCoinID(coinID, options)`](/api-reference/tickers/get-historical-ticks-for-a-specific-coin) - Get historical ticks.
+
+### Exchanges
+- [`client.Exchanges.List(options)`](/api-reference/exchanges/list-exchanges) - List all exchanges.
+- [`client.Exchanges.GetByID(exchangeID)`](/api-reference/exchanges/get-exchange-by-id) - Get a specific exchange.
+- [`client.Exchanges.GetMarketsByExchangeID(exchangeID, options)`](/api-reference/exchanges/list-an-exchange-markets) - Get markets for an exchange.
+
+### Tools
+- [`client.Tools.Search(query, options)`](/api-reference/tools/search) - Search for assets.
+- [`client.Tools.PriceConverter(options)`](/api-reference/tools/price-converter) - Convert between currencies.
+
+## Examples Repository
+
+Check out practical examples in the [official repository](https://github.com/coinpaprika/coinpaprika-api-go-client/tree/main/examples).
+
+## Requirements
+
+- Go 1.13 or higher
+- Internet connection for API calls
+
+## License
+
+This library is available under the MIT license. See the [LICENSE file](https://github.com/coinpaprika/coinpaprika-api-go-client/blob/master/LICENSE.md) for more info. 

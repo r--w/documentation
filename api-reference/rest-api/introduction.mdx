@@ -1,0 +1,110 @@
+---
+title: 'Getting started'
+sidebarTitle: "Introduction"
+---
+
+The CoinPaprika API provides extensive and reliable data for over 50,000 crypto assets, tracking them across more than 350 exchanges. Below are some of the most popular endpoints to get you started.
+
+<CardGroup cols={3}>
+  <Card 
+    title="Tickers" 
+    icon="tag"
+    color="#CE0017"
+    href="/api-reference/tickers/get-tickers-for-all-active-coins"
+  >
+    Get the latest price, volume, and market cap data for any coin.
+  </Card>
+  <Card
+    title="Coins"
+    icon="coins"
+    color="#CE0017"
+    href="/api-reference/coins/list-coins"
+  >
+    Access detailed information about any coin, including social links and whitepapers.
+  </Card>
+  <Card
+    title="Exchanges"
+    icon="store"
+    color="#CE0017"
+    href="/api-reference/exchanges/list-exchanges"
+  >
+    Retrieve data on all supported exchanges, including their markets and trading volumes.
+  </Card>
+</CardGroup>
+
+## Base URL
+
+All API endpoints use the following base URL:
+
+```
+https://api.coinpaprika.com/v1
+```
+
+## Authentication
+
+Most of our API endpoints are available without an API key. However, for higher rate limits and access to premium features, we recommend using an API key.
+
+<Note>
+  Authentication may be required for certain endpoints in the future as we expand our services.
+</Note>
+
+To authenticate, include your API key as a Bearer token in the `Authorization` header of your request:
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" "https://api.coinpaprika.com/v1/users/me"
+```
+<Tip>You can get your API Key by visiting our official website [here](https://coinpaprika.com/api/)</Tip>
+
+## Rate limits
+
+Our API has the following rate limits based on your subscription plan:
+
+- **Free**: 20,000 requests per month
+- **Starter**: 400,000 requests per month
+- **Pro**: 1,000,000 requests per month
+- **Business**: 5,000,000 requests per month
+- **Ultimate**: 10,000,000 requests per month
+- **Enterprise**: Custom limits
+
+For more details, please see our [pricing page](https://coinpaprika.com/api/pricing).
+
+## SDKs
+
+We offer several SDKs to help you integrate with our API more easily:
+
+<CardGroup cols={2}>
+  <Card
+    title="Go"
+    icon="code-branch"
+    color="#CE0017"
+    href="https://github.com/coinpaprika/coinpaprika-api-go-client"
+  >
+    Official Go client for the CoinPaprika API.
+  </Card>
+  <Card
+    title="PHP"
+    icon="code-branch"
+    color="#CE0017"
+    href="https://github.com/coinpaprika/coinpaprika-api-php-client"
+  >
+    Official PHP client for the CoinPaprika API.
+  </Card>
+</CardGroup>
+<CardGroup cols={2}>
+  <Card
+    title="Python"
+    icon="code-branch"
+    color="#CE0017"
+    href="https://github.com/coinpaprika/coinpaprika-api-python-client"
+  >
+    Official Python client for the CoinPaprika API.
+  </Card>
+  <Card
+    title="TypeScript"
+    icon="code-branch"
+    color="#CE0017"
+    href="https://github.com/coinpaprika/coinpaprika-api-js-client"
+  >
+    Official TypeScript/JavaScript client for the CoinPaprika API.
+  </Card>
+</CardGroup>

@@ -1,0 +1,152 @@
+---
+title: "Your First Crypto Stream in 5 Minutes"
+description: "A step-by-step guide to connecting to the CoinPaprika Streaming API and receiving live ticker data in less than 5 minutes."
+---
+
+import { Steps } from 'mintlify/components';
+
+# Your First Crypto Stream in 5 Minutes
+
+Want to start streaming real-time crypto data right now? This guide will get you connected to the CoinPaprika Streaming API and receiving live price updates in **less than 5 minutes**.
+
+We'll walk you through a simple copy-paste Node.js script. No complex setup, just instant data.
+
+## What You'll Need
+
+*   **A CoinPaprika API Key**: If you don’t have one, get it from the [CoinPaprika API page](https://coinpaprika.com/api/).
+*   **Node.js**: If you don't have it installed, download it from the [official Node.js website](https://nodejs.org/).
+
+## Step 1: Set Up Your Project (1 Minute)
+
+First, let's create a new project directory and install the necessary `ws` library for handling WebSockets in Node.js.
+
+<Steps>
+### Create a Project Folder
+Open your terminal and run these commands to create a project folder and navigate into it:
+```bash
+mkdir coinpaprika-5min-stream
+cd coinpaprika-5min-stream
+```
+
+### Initialize a Node.js Project
+Next, run this command to create a `package.json` file for your project.
+```bash
+npm init -y
+```
+
+### Install the WebSocket Library
+Finally, install the `ws` library to handle the WebSocket connection.
+```bash
+npm install ws
+```
+</Steps>
+
+## Step 2: Create and Run the Client (4 Minutes)
+
+Now, create a new file named `index.js` in your project folder. This file will contain all the code for our streaming client.
+
+Open `index.js` and **paste the following code into it**. Be sure to replace `"YOUR_API_KEY"` with your actual CoinPaprika API key.
+
+```javascript
+// Import the WebSocket library
+import WebSocket from "ws";
+
+// --- Configuration ---
+// Replace with your actual CoinPaprika API key
+const API_KEY = "YOUR_API_KEY"; 
+const WS_URL = "wss://streaming.coinpaprika.com/ticks";
+
+console.log("--- CoinPaprika 5-Minute Ticker ---");
+
+// --- WebSocket Connection ---
+try {
+  // Initialize the WebSocket connection with your API key in the headers
+  const ws = new WebSocket(WS_URL, {
+    headers: {
+      Authorization: API_KEY,
+    },
+  });
+
+  let pingTimeout;
+
+  // This function is a safeguard that terminates the connection if the server stops sending pings.
+  function heartbeat() {
+    clearTimeout(pingTimeout);
+    console.log("Heartbeat timeout. Terminating connection.");
+    ws.terminate();
+  }
+
+  // --- Event Handlers ---
+
+  // 1. When the connection opens, subscribe to tickers.
+  ws.on("open", () => {
+    console.log("✅ Connection established. Subscribing to tickers...");
+    pingTimeout = setTimeout(heartbeat, 130 * 1000); // Expect a ping within 130 seconds
+
+    const subscribePayload = {
+      event: "subscribe",
+      ids: ["btc-bitcoin", "eth-ethereum"],
+      quotes: ["USD"],
+    };
+
+    ws.send(JSON.stringify(subscribePayload));
+  });
+
+  // 2. When the server sends a ping, reset the heartbeat timeout.
+  ws.on("ping", () => {
+    console.log("Received server ping. Connection is healthy.");
+    clearTimeout(pingTimeout);
+    pingTimeout = setTimeout(heartbeat, 130 * 1000);
+  });
+
+  // 3. When a message is received, log it to the console.
+  ws.on("message", (data) => {
+    const message = JSON.parse(data.toString());
+    console.log("Received ticker update:", message);
+  });
+
+  // 4. When the connection closes, clean up the timeout.
+  ws.on("close", () => {
+    console.log("Connection closed.");
+    clearTimeout(pingTimeout);
+  });
+
+  // 5. Handle any errors that occur.
+  ws.on("error", (err) => {
+    console.error("A WebSocket error occurred:", err);
+  });
+
+} catch (e) {
+  console.error("Failed to create WebSocket connection:", e);
+}
+```
+
+### Run the Application
+
+You are now ready to go! Save the `index.js` file, and in your terminal, run the following command:
+
+```bash
+node index.js
+```
+
+You should immediately see output as the connection is made and data starts streaming in:
+
+```
+--- CoinPaprika 5-Minute Ticker ---
+✅ Connection established. Subscribing to tickers...
+Received ticker update: { id: 'btc-bitcoin', sym: 'BTC', ... }
+Received ticker update: { id: 'eth-ethereum', sym: 'ETH', ... }
+```
+
+And that's it! In just a few minutes, you've gone from an empty folder to a live stream of cryptocurrency data. You now have a working foundation to build any real-time application.
+
+## Next Steps
+
+This tutorial provides a solid foundation. Here are a few ideas for expanding your application:
+
+*   **Store the Data**: Save the incoming ticker data to a database for historical analysis.
+*   **Build a UI**: Create a web-based dashboard to visualize the price changes in real time.
+*   **Add More Currencies**: Modify the `subscribePayload` to include other cryptocurrencies you're interested in.
+*   **Implement Reconnection Logic**: Enhance the script to automatically reconnect if the connection is lost.
+
+Happy coding! 

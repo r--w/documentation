@@ -1,0 +1,78 @@
+.card .icon {
+  color: #FF5733;
+}
+
+.pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2em;
+}
+.pricing-table th, .pricing-table td {
+    padding: 12px 15px;
+    text-align: center;
+    vertical-align: middle;
+}
+.pricing-table th {
+    background-color: #2a2a2a;
+}
+.pricing-table th:first-child, .pricing-table td:first-child {
+    text-align: left;
+}
+.pricing-table tbody tr {
+    border-bottom: 1px solid #444;
+}
+.pricing-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+/* Custom pricing table styles */
+div.w-full.relative.flex.flex-col .pricing-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+div.w-full.relative.flex.flex-col .pricing-table th,
+div.w-full.relative.flex.flex-col .pricing-table td {
+    word-break: break-word;
+    font-size: 0.9rem;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+div.w-full.relative.flex.flex-col .pricing-table th {
+  border-bottom: 1px solid #444;
+}
+
+div.w-full.relative.flex.flex-col .pricing-table td {
+  border-top: 1px solid #444;
+}
+
+/* Remove double border between header and first row */
+div.w-full.relative.flex.flex-col .pricing-table tr:first-child td {
+  border-top: none;
+}
+
+.pricing-table th:last-child, .pricing-table td:last-child,
+div.w-full.relative.flex.flex-col .pricing-table th:last-child,
+div.w-full.relative.flex.flex-col .pricing-table td:last-child {
+    border-right: none;
+}
+
+.no-wrap-row td {
+  white-space: nowrap;
+}
+
+/* Custom styles for the promotional card on the homepage */
+a.card.promo-card {
+  background: linear-gradient(to right, #2a080c, #4f0f16) !important;
+  border: 1px solid #ce0017 !important;
+}
+
+a.card.promo-card:hover {
+  background: linear-gradient(to right, #3a0c11, #5f131b) !important;
+}
+
+a.card.promo-card .title,
+a.card.promo-card .description {
+    color: white !important;
+}

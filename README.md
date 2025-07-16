@@ -1,32 +1,61 @@
-# Mintlify Starter Kit
+# Coinpaprika Documentation Guide
 
-Click on `Use this template` to copy the Mintlify starter kit. The starter kit contains examples including
+This guide explains how to update and maintain the documentation for [docs.coinpaprika.com](https://docs.coinpaprika.com).
 
-- Guide pages
-- Navigation
-- Customizations
-- API Reference pages
-- Use of popular components
+## Overview
 
-### Development
+The documentation is built with Mintlify and consists of:
+- **REST API Reference** (Rendered from `api-reference/rest-api/openapi.yml`)
+- **Streaming API Reference** (Rendered from `api-reference/streaming-api/asyncapi.yml`)
+- **Guides & SDK Information** (Manually created Markdown `.mdx` files)
+- **Overall Configuration** (`docs.json` handles the main settings, navigation, and branding)
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview the documentation changes locally. To install, use the following command
+## Updating the API References
 
-```
-npm i -g mint
-```
+The technical API references are rendered directly from their specification files. Unlike other setups, there is no scraping or code generation step required to update the documentation for the REST or Streaming APIs.
 
-Run the following command at the root of your documentation (where docs.json is)
+- **To update the REST API:** Modify the content of `documentation/api-reference/rest-api/openapi.yml`.
+- **To update the Streaming API:** Modify the content of `documentation/api-reference/streaming-api/asyncapi.yml`.
 
-```
-mint dev
-```
+Mintlify will automatically reflect the changes in the documentation when you run the local development server or when the site is deployed.
 
-### Publishing Changes
+## Running the Documentation Locally
 
-Install our Github App to auto propagate changes from your repo to your deployment. Changes will be deployed to production automatically after pushing to the default branch. Find the link to install on your dashboard. 
+To preview your changes on your local machine before publishing:
 
-#### Troubleshooting
+1.  **Clone the repository**:
+    ```bash
+    # Replace with the correct repository URL
+    git clone https://github.com/coinpaprika/coinpaprika-api-docs
+    cd coinpaprika-api-docs/documentation
+    ```
+2.  **Install Mintlify CLI** (this only needs to be done once):
+    ```bash
+    npm i -g mintlify
+    ```
+3.  **Run the local development server**:
+    ```bash
+    mintlify dev
+    ```
+4.  Open the local URL provided in your terminal (usually `http://localhost:3000`) to see the documentation site. The site will hot-reload as you make changes to the files.
 
-- If the dev environment isn't running - Run `mint update` to ensure you have the most recent version of the CLI.
-- Page loads as a 404 - Make sure you are running in a folder with `docs.json`
+## How Files Are Displayed
+
+| File / Directory                               | Where It Appears on the Docs Site                               | Purpose                                                                |
+| ---------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `docs.json`                                    | **Main Settings File**                                          | Controls navigation, branding, SEO, and overall document structure.    |
+| `index.mdx`                                    | [docs.coinpaprika.com](https://docs.coinpaprika.com)            | The main landing page for the documentation.                           |
+| `api-reference/rest-api/openapi.yml`           | The **REST API** tab                                            | The source file that generates the entire REST API reference.          |
+| `api-reference/streaming-api/asyncapi.yml`     | The **Streaming API** tab                                       | The source file that generates the entire Streaming API reference.     |
+| `get-started/`                                 | The "SDKs & Libraries" section                                  | Contains individual pages for different official SDKs.                 |
+| `style.css`                                    | Global                                                          | Provides custom CSS styling for the documentation.                     |
+
+## Summary
+
+- **To update API docs:** Simply edit the corresponding `openapi.yml` or `asyncapi.yml` file. No scraping command is needed.
+- **To add guides or pages:** Create a new `.mdx` file and add it to the navigation structure in `docs.json`.
+- **To test changes:** Run `mintlify dev` from within the `documentation` directory.
+- **`docs.json` is the master file:** It controls navigation, appearance, and site-wide settings.
+- For more information on Mintlify features and components, visit the official [Mintlify Documentation](https://mintlify.com/docs/getting-started).
+
+If you have any questions, please reach out to the team. 🚀  
