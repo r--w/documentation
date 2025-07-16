@@ -81,9 +81,10 @@
         "asyncapi": "api-reference/streaming-api/asyncapi.yml",
         "groups": [
           {
-            "group": "Websockets",
+            "group": "Guides",
             "pages": [
-              "api-reference/streaming-api/streaming-introduction"
+              "api-reference/streaming-api/streaming-introduction",
+              "api-reference/streaming-api/streaming-api-tutorial"
             ]
           }
         ]
