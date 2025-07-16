@@ -1,0 +1,228 @@
+---
+title: "PHP SDK"
+description: "Official CoinPaprika API PHP client library"
+---
+
+# CoinPaprika PHP SDK
+
+The official PHP client library for the CoinPaprika API provides convenient access to cryptocurrency market data. It uses Guzzle for HTTP requests and the JMS/Serializer for handling API responses.
+
+## Installation
+
+Install the CoinPaprika PHP SDK via Composer:
+
+```bash
+composer require coinpaprika/coinpaprika-api-php-client
+```
+
+## Requirements
+
+- PHP >= 7.2.5
+- Composer for dependency management
+- `guzzlehttp/guzzle`, `jms/serializer`, `symfony/yaml`, `doctrine/cache`
+
+## Quick Start
+
+### Basic Usage
+
+The following example shows how to initialize the client and fetch global market statistics.
+
+```php
+<?php
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+// Initialize the client
+$client = new \Coinpaprika\Client();
+
+// Get global market data
+$global = $client->getGlobalStats();
+echo "Total market cap: $" . number_format($global->getMarketCapUsd()) . "\n";
+echo "24h volume: $" . number_format($global->getVolume24hUsd()) . "\n";
+echo "Bitcoin dominance: " . $global->getBitcoinDominancePercentage() . "%\n";
+```
+
+### Pro API with API Key
+
+To access Pro API endpoints, provide your API key directly in the constructor.
+
+```php
+<?php
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+// Initialize with API key
+$apiKey = 'YOUR_API_KEY';
+$client = new \Coinpaprika\Client(null, null, $apiKey);
+
+// Now you have access to Pro features. For example, fetching historical tickers:
+$historicalTickers = $client->getHistoricalTickerByCoinId(
+    'btc-bitcoin',
+    '2023-01-01',
+    '1d'
+);
+
+echo "Fetched " . count($historicalTickers) . " historical tickers for Bitcoin.\n";
+```
+
+<Note>
+Get your API key at [coinpaprika.com/api](https://coinpaprika.com/api/)
+</Note>
+
+## Common Use Cases
+
+### Listing All Coins
+
+This client does not have a method to fetch a single coin by its ID. Instead, you can fetch the full list of all coins and then find the one you need.
+
+```php
+<?php
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+$client = new \Coinpaprika\Client();
+
+// Get all coins
+$coins = $client->getCoins();
+echo "Found " . count($coins) . " coins\n\n";
+
+// Find Ethereum from the list
+$ethereum = null;
+foreach ($coins as $coin) {
+    if ($coin->getId() === 'eth-ethereum') {
+        $ethereum = $coin;
+        break;
+    }
+}
+
+if ($ethereum) {
+    echo "Ethereum Information:\n";
+    echo "- Name: " . $ethereum->getName() . "\n";
+    echo "- Symbol: " . $ethereum->getSymbol() . "\n";
+    echo "- Type: " . $ethereum->getType() . "\n";
+}
+```
+
+### Getting Ticker Data
+
+You can fetch a list of all tickers or get a specific ticker by a coin's ID.
+
+```php
+<?php
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+$client = new \Coinpaprika\Client();
+
+// Get tickers for all coins
+$allTickers = $client->getTickers();
+echo "Fetched " . count($allTickers) . " tickers.\n";
+
+// Get a specific ticker by coin ID
+$btcTicker = $client->getTickerByCoinId('btc-bitcoin');
+$usdQuote = $btcTicker->getQuotes()['USD'];
+
+echo "\nBitcoin Market Data:\n";
+echo "- Price: $" . number_format($usdQuote->getPrice(), 2) . "\n";
+echo "- Market Cap: $" . number_format($usdQuote->getMarketCap()) . "\n";
+echo "- 24h Volume: $" . number_format($usdQuote->getVolume24h()) . "\n";
+```
+
+### Search
+
+The client provides a search endpoint that can look for currencies, exchanges, ICOs, people, and tags.
+
+```php
+<?php
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+$client = new \Coinpaprika\Client();
+
+// Search for 'ether' across multiple categories
+$searchResults = $client->search('ether', ['currencies', 'icos']);
+
+echo "Search results for 'ether':\n\n";
+
+if (!empty($searchResults->getCurrencies())) {
+    echo "Currencies (" . count($searchResults->getCurrencies()) . "):\n";
+    foreach ($searchResults->getCurrencies() as $currency) {
+        echo "- " . $currency->getName() . " (" . $currency->getSymbol() . ")\n";
+    }
+}
+
+if (!empty($searchResults->getIcos())) {
+    echo "\nICOs (" . count($searchResults->getIcos()) . "):\n";
+    foreach ($searchResults->getIcos() as $ico) {
+        echo "- " . $ico->getName() . " (" . $ico->getSymbol() . ")\n";
+    }
+}
+```
+
+## Error Handling
+
+The client throws specific exceptions for different types of errors. It's best to wrap your API calls in a `try-catch` block to handle these gracefully.
+
+```php
+<?php
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+$client = new \Coinpaprika\Client();
+
+try {
+    // This will fail because the coin ID does not exist
+    $ticker = $client->getTickerByCoinId('invalid-coin-id');
+    
+} catch (\Coinpaprika\Exception\RateLimitExceededException $e) {
+    echo "Rate limit exceeded. Please wait before making more requests.\n";
+
+} catch (\GuzzleHttp\Exception\ClientException $e) {
+    // Guzzle's ClientException is thrown for 4xx errors
+    $response = $e->getResponse();
+    $statusCode = $response->getStatusCode();
+    $body = $response->getBody()->getContents();
+    
+    echo "API Error: {$statusCode} - {$body}\n";
+    
+} catch (Exception $e) {
+    // Handle other generic errors
+    echo "An unexpected error occurred: " . $e->getMessage() . "\n";
+}
+```
+
+## Available Methods
+
+### Global
+- [`getGlobalStats()`](/api-reference/global/get-market-overview-data) - Get global market overview.
+
+### Coins
+- [`getCoins()`](/api-reference/coins/list-coins) - List all active coins.
+- [`getTokenMeta(string $id)`](/api-reference/coins/get-coin-by-id) - Get metadata for a specific token.
+
+### Tickers
+- [`getTickers()`](/api-reference/tickers/get-tickers-for-all-active-coins) - Get tickers for all coins.
+- [`getTickerByCoinId(string $id)`](/api-reference/tickers/get-ticker-for-a-specific-coin) - Get a specific ticker by coin ID.
+- [`getHistoricalTickerByCoinId(string $id, string $start, string $interval)`](/api-reference/tickers/get-historical-ticks-for-a-specific-coin) - Get historical ticker data.
+
+### Exchanges
+- [`getExchanges()`](/api-reference/exchanges/list-exchanges) - List all exchanges.
+- [`getExchangeById(string $id)`](/api-reference/exchanges/get-exchange-by-id) - Get a specific exchange.
+- [`getExchangeMarkets(string $id)`](/api-reference/exchanges/list-an-exchange-markets) - Get markets for an exchange.
+
+### Tools
+- [`search(string $query, array $categories = null, int $limit = null)`](/api-reference/tools/search) - Search across coins, exchanges, etc.
+- [`priceConverter(string $baseId, string $quoteId, float $amount)`](/api-reference/tools/price-converter) - Convert between currencies.
+
+### Other
+- `getIcos(array $parameters = [])` - Get a list of ICOs.
+- `setApiKey(string $apiKey)` - Set the API key after client initialization.
+- [`getOHLCV(string $id, string $interval)`](/api-reference/coins/get-historical-ohlc) - Get the latest OHLCV data.
+
+## Examples Repository
+
+For more detailed examples, please see the [official repository](https://github.com/coinpaprika/coinpaprika-api-php-client/tree/main/examples).
+
+## License
+
+This library is available under the MIT license. See the [LICENSE file](https://github.com/coinpaprika/coinpaprika-api-php-client/blob/master/LICENSE.md) for more info. 

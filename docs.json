@@ -1,102 +1,231 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "theme": "willow",
+  "name": "CoinPaprika API",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#CA312C",
+    "dark": "#CA312C",
+    "light": "#CA312C"
   },
+  "background": {
+  "color": {
+    "light": "#ffffff",  
+    "dark": "#252425"   
+  }
+},
+"fonts": {
+  "body": {
+    "family": "Arial",
+    "weight": 400
+  },
+  "heading": {
+    "family": "Inconsolata",
+    "weight": 700
+  }
+},
   "favicon": "/favicon.svg",
+  "integrations": {
+    "ga4": {
+      "measurementId": "G-DO_USTAWIENIA"
+    }
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude"
+    ]
+  },
   "navigation": {
     "tabs": [
+              {
+          "tab": "Guides",
+          "groups": [
+            {
+              "group": "Get Started",
+              "pages": [
+                "index",
+                "faq",
+                "api-plans"
+              ]
+            },
+            {
+              "group": "SDKs & Libraries",
+              "pages": [
+                "get-started/sdk-python",
+                "get-started/sdk-javascript",
+                "get-started/sdk-php",
+                "get-started/sdk-go",
+                "get-started/sdk-kotlin",
+                "get-started/sdk-swift",
+                "get-started/sdk-rust"
+              ]
+            }
+          ]
+        },
       {
-        "tab": "Guides",
+        "tab": "REST API",
+        "openapi": "api-reference/rest-api/openapi.yml",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Getting Started",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "Essentials",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
+              "api-reference/rest-api/introduction"
             ]
           }
         ]
       },
       {
-        "tab": "API Reference",
+        "tab": "Streaming API",
+        "asyncapi": "api-reference/streaming-api/asyncapi.yml",
         "groups": [
           {
-            "group": "API Documentation",
+            "group": "Websockets",
             "pages": [
-              "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoint Examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/streaming-api/streaming-introduction"
             ]
           }
+        ]
+      },
+      {
+        "tab": "On-chain & DEX Data",
+        "pages": [
+          "dexpaprika"
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "pages": [
+          "changelog"
         ]
       }
     ],
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "API Playground",
+          "href": "https://docs.coinpaprika.com/api-reference/introduction",
+          "icon": "code"
         },
         {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
+          "anchor": "Discord Community",
+          "href": "https://discord.gg/DhJge5TUGM",
+          "icon": "discord"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "CoinPaprika",
+          "href": "https://coinpaprika.com",
+          "icon": "pepper-hot"
+        },
+        {
+          "anchor": "CoinPaprika on X",
+          "href": "https://x.com/coinpaprika",
+          "icon": "x-twitter"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/api_logo.svg",
+    "dark": "/logo/api_logo.svg",
+    "href": "https://docs.coinpaprika.com"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "https://coinpaprika.com/contact/"
+      },
+      {
+        "label": "Visit CoinPaprika",
+        "href": "https://coinpaprika.com/"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "API Dashboard",
+      "href": "https://coinpaprika.com/api/panel/"
     }
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/coinpaprika",
+      "github": "https://github.com/coinpaprika"
+    },
+    "links": [
+      {
+        "header": "Resources",
+        "items": [
+          {
+            "label": "API",
+            "href": "https://coinpaprika.com/api/"
+          },
+          {
+            "label": "API Pricing",
+            "href": "https://coinpaprika.com/api/pricing"
+          },
+          {
+            "label": "Status",
+            "href": "https://status.coinpaprika.com/"
+          }
+        ]
+      },
+      {
+        "header": "Company",
+        "items": [
+          {
+            "label": "About Us",
+            "href": "https://coinpaprika.com/about-us/"
+          },
+          {
+            "label": "Terms of Use",
+            "href": "https://coinpaprika.com/terms-of-use/"
+          },
+          {
+            "label": "Privacy Policy",
+            "href": "https://coinpaprika.com/privacy-policy/"
+          }
+        ]
+      }
+    ]
+  },
+  "api": {
+    "baseUrl": "https://api.coinpaprika.com/v1",
+    "playground": {
+      "mode": "simple"
     }
+  },
+  "seo": {
+    "metatags": {
+      "title": "CoinPaprika API Docs | Latest & Historical Crypto Data",
+      "description": "Official documentation for the CoinPaprika API. Access latest and historical cryptocurrency market data, including prices, volumes, market caps, and more.",
+      "keywords": "CoinPaprika, CoinPaprika API, crypto API, cryptocurrency API, blockchain data, real-time crypto prices, historical crypto data, token data, developer API, REST API, WebSocket API",
+      "author": "CoinPaprika",
+      "robots": "index, follow",
+      "googlebot": "index, follow",
+      "og:title": "CoinPaprika API Docs | Latest Low-Latency & Historical Crypto Data",
+      "og:description": "The official developer documentation for the CoinPaprika API. Find guides, API references, and tutorials to integrate comprehensive crypto data.",
+      "og:type": "website",
+      "og:url": "https://docs.coinpaprika.com",
+      "og:image": "https://coinpaprika.com/opengraph-image.png",
+      "og:site_name": "CoinPaprika API Documentation",
+      "twitter:card": "summary_large_image",
+      "twitter:site": "@coinpaprika",
+      "twitter:creator": "@coinpaprika",
+      "twitter:title": "CoinPaprika API Docs",
+      "twitter:description": "Your complete guide to integrating low-latency and historical cryptocurrency data with the powerful CoinPaprika API.",
+      "twitter:image": "https://coinpaprika.com/opengraph-image.png"
+    }
+  },
+  "styling": {
+    "eyebrows": "breadcrumbs",
+    "codeblocks": "dark",
+    "appearance": {
+      "default": "dark"
+    },
+    "css": [
+      "./style.css"
+    ]
   }
 }

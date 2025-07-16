@@ -1,0 +1,216 @@
+---
+title: "Streaming API Introduction"
+description: "High-frequency cryptocurrency data via WebSocket"
+---
+
+# CoinPaprika Streaming API
+
+The CoinPaprika Streaming API provides high-frequency cryptocurrency ticker data via WebSocket connections, allowing you to get live price updates, market cap changes, and volume data for your favorite cryptocurrencies.
+
+## Getting Started
+
+### 1. Endpoint
+
+Connect to our WebSocket endpoint to start receiving live cryptocurrency data:
+
+```
+wss://streaming.coinpaprika.com/ticks
+```
+
+### 2. Authentication
+
+All requests require authentication using your API key. You must include it in the `Authorization` header of your WebSocket connection request.
+
+To get your API key, visit the [CoinPaprika API](https://coinpaprika.com/api/) page.
+
+### 3. Finding IDs
+*   **Currency IDs (`ids`)**: To subscribe to a currency, you need its unique ID (e.g., `"btc-bitcoin"`). You can find these IDs by using the [Coins endpoint](https://docs.coinpaprika.com/api-reference/coins/get-coin-by-id) from our REST API.
+*   **Quote Currencies (`quotes`)**: You can receive prices quoted in various currencies. The currently supported quote currencies are: `USD`, `BTC`, `ETH`, `BNB`, `MATIC`, `SOL`.
+
+## Subscribing to Tickers
+
+Once connected, you can subscribe to or unsubscribe from ticker updates by sending JSON messages.
+
+### Subscribe
+
+To receive updates for one or more cryptocurrencies, send a `subscribe` message:
+
+```json
+{
+  "event": "subscribe",
+  "ids": ["btc-bitcoin", "eth-ethereum"],
+  "quotes": ["USD", "BTC"]
+}
+```
+
+### Unsubscribe
+
+To stop receiving updates, send an `unsubscribe` message:
+
+```json
+{
+  "event": "unsubscribe",
+  "ids": ["btc-bitcoin"]
+}
+```
+
+## Connection Management (Heartbeat)
+
+The API uses the standard WebSocket ping/pong mechanism to keep connections alive. Your client does not need to send any application-level ping messages.
+
+The server sends a `ping` frame every 120 seconds. Most modern WebSocket client libraries will automatically respond with the required `pong` frame. If the server does not receive a `pong` response, it will assume the connection is stale and close it.
+
+The client examples below demonstrate a robust pattern for handling this by setting a timeout that will terminate and reconnect if a server ping is not received within a certain window.
+
+## Code Examples
+
+### Node.js
+
+```javascript
+import WebSocket from "ws";
+
+const API_KEY = "YOUR_API_KEY"; // Replace with your API key
+const WS_URL = "wss://streaming.coinpaprika.com/ticks";
+
+try {
+  const ws = new WebSocket(WS_URL, {
+    headers: {
+      Authorization: API_KEY,
+    },
+  });
+
+  let pingTimeout;
+
+  function heartbeat() {
+    // Terminate connection if server doesn't send a ping in time
+    clearTimeout(pingTimeout);
+    console.log("Heartbeat timeout. Terminating connection.");
+    ws.terminate();
+  }
+
+  ws.on("open", () => {
+    console.log("Connection established.");
+    pingTimeout = setTimeout(heartbeat, 130 * 1000); // Set initial timeout
+
+    const subscribePayload = {
+      event: "subscribe",
+      ids: ["btc-bitcoin", "eth-ethereum"],
+      quotes: ["USD", "BTC"],
+    };
+
+    ws.send(JSON.stringify(subscribePayload));
+    console.log("Subscribed to ticker updates for BTC and ETH.");
+  });
+
+  ws.on("ping", () => {
+    // Server ping received, reset the timeout
+    console.log("Received server ping. Resetting heartbeat timeout.");
+    clearTimeout(pingTimeout);
+    pingTimeout = setTimeout(heartbeat, 130 * 1000); 
+  });
+
+  ws.on("message", (data) => {
+    console.log("Received message:", JSON.parse(data.toString()));
+  });
+
+  ws.on("close", () => {
+    console.log("Connection closed.");
+    clearTimeout(pingTimeout);
+  });
+
+  ws.on("error", (err) => {
+    console.error("WebSocket error:", err);
+  });
+} catch (e) {
+  console.error("Failed to connect:", e);
+}
+```
+
+### Python
+
+```python
+import websocket
+import json
+import time
+import threading
+
+API_KEY = "YOUR_API_KEY"  # Replace with your API key
+WS_URL = "wss://streaming.coinpaprika.com/ticks"
+
+def on_message(ws, message):
+    print(f"Received message: {json.loads(message)}")
+
+def on_error(ws, error):
+    print(f"Error: {error}")
+
+def on_close(ws, close_status_code, close_msg):
+    print("### Connection closed ###")
+
+def on_open(ws):
+    print("Connection opened.")
+    subscribe_payload = {
+        "event": "subscribe",
+        "ids": ["btc-bitcoin", "eth-ethereum"],
+        "quotes": ["USD", "BTC"],
+    }
+    ws.send(json.dumps(subscribe_payload))
+    print("Subscribed to ticker updates for BTC and ETH.")
+
+if __name__ == "__main__":
+    # websocket.enableTrace(True) # Uncomment for debug logging
+    ws_app = websocket.WebSocketApp(
+        WS_URL,
+        header={"Authorization": API_KEY},
+        on_open=on_open,
+        on_message=on_message,
+        on_error=on_error,
+        on_close=on_close
+    )
+    ws_app.run_forever(ping_interval=60, ping_timeout=10)
+```
+
+## Message Format
+
+When subscribed, you'll receive live updates in this format:
+
+```json
+{
+  "id": "btc-bitcoin",
+  "sym": "BTC",
+  "ts": 1676916987,
+  "quotes": {
+    "USD": {
+      "m": 608286188,
+      "p": 50000.123,
+      "v24h": 801851299.55
+    }
+  }
+}
+```
+
+Where:
+- `id`: CoinPaprika currency ID
+- `sym`: Currency symbol
+- `ts`: Unix timestamp
+- `quotes`: Price data in requested quote currencies
+  - `m`: Market cap
+  - `p`: Current price
+  - `v24h`: 24-hour volume
+
+## Rate Limits
+
+- **Quotes per subscription**: Up to 5 quote currencies at once.
+
+## Best Practices
+
+1. **Implement heartbeat monitoring** to ensure a stable connection.
+2. **Handle reconnections** gracefully, for example with an exponential backoff strategy.
+3. **Subscribe only to needed currencies** to optimize bandwidth.
+4. **Store your API token securely** and never expose it in client-side code.
+5. **Implement proper error handling** for network issues and connection closures.
+
+## Support
+
+For technical support or questions about the Streaming API:
+- Contact: [Fill out the form](https://coinpaprika.com/contact/)
+- Discord: [Join our community](https://discord.gg/DhJge5TUGM) 

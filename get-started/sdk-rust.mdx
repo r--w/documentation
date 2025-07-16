@@ -1,0 +1,166 @@
+---
+title: "Rust SDK"
+description: "Official CoinPaprika API Rust client library"
+---
+
+# CoinPaprika Rust SDK
+
+The official Rust client library for the CoinPaprika API provides convenient access to cryptocurrency market data.
+
+<Note>
+This SDK was built by the courtesy of [Tokenomia Pro](https://tokenomia.pro).
+</Note>
+
+## Installation
+
+Add the CoinPaprika Rust SDK to your `Cargo.toml`:
+
+```toml
+[dependencies]
+coinpaprika_api = "0.1"
+```
+
+## Quick Start
+
+### Free Plan
+
+For basic usage with the free API plan:
+
+```rust
+use coinpaprika_api::client::Client;
+use coinpaprika_api::global::Global;
+use std::error::Error;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+    let client = Client::new();
+
+    let global: Global = client.global().send().await?;
+    println!("global: {:#?}", global);
+
+    Ok(())
+}
+```
+
+### Pro Plan
+
+To access Pro features and higher rate limits, initialize the client with your API key.
+
+```rust
+use coinpaprika_api::client::Client;
+use coinpaprika_api::global::Global;
+use std::error::Error;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+    let client = Client::with_key("<your-api-key-here>");
+
+    let global: Global = client.global().send().await?;
+    println!("global: {:#?}", global);
+
+    Ok(())
+}
+```
+
+<Note>
+Get your API key at [coinpaprika.com/api](https://coinpaprika.com/api/)
+</Note>
+
+## Common Use Cases
+
+### Getting Market Data
+
+```rust
+use coinpaprika_api::client::Client;
+use coinpaprika_api::tickers::Tickers;
+use std::error::Error;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+    let client = Client::new();
+
+    // Get all tickers
+    let tickers: Tickers = client.tickers().send().await?;
+    println!("\nTop 5 cryptocurrencies:");
+    for ticker in tickers.iter().take(5) {
+        let name = &ticker.name;
+        let symbol = &ticker.symbol;
+        let price = ticker.quotes.get("USD").map_or(0.0, |q| q.price);
+        println!("{} ({}): ${:.2}", name, symbol, price);
+    }
+
+    Ok(())
+}
+```
+
+### Coin Information
+
+```rust
+use coinpaprika_api::client::Client;
+use coinpaprika_api::coins::{Coin, Markets};
+use std::error::Error;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+    let client = Client::new();
+
+    // Get detailed coin information
+    let coin: Coin = client.coin("eth-ethereum").send().await?;
+    println!("Name: {}", coin.name);
+    println!("Symbol: {}", coin.symbol);
+    println!("Active: {}", coin.is_active);
+
+    // Get coin markets
+    let markets: Markets = client.coin("eth-ethereum").markets().send().await?;
+    println!("Trading on {} markets", markets.len());
+
+    Ok(())
+}
+```
+
+## Available Methods
+
+### Key
+- [Get API key info](/api-reference/key/get-api-key-info)
+
+### Global
+- [Get market overview data](/api-reference/global/get-market-overview-data)
+
+### Coins
+- [List coins](/api-reference/coins/list-coins)
+- [Get coin by ID](/api-reference/coins/get-coin-by-id)
+- [Get Twitter timeline tweets for a coin](/api-reference/coins/get-twitter-timeline-tweets-for-a-coin)
+- [Get coin events by coin ID](/api-reference/coins/get-coin-events-by-coin-id)
+- [Get exchanges by coin ID](/api-reference/coins/get-exchanges-by-coin-id)
+- [Get markets by coin ID](/api-reference/coins/get-markets-by-coin-id)
+- [Get OHLC for the last full day](/api-reference/coins/get-ohlc-for-the-last-full-day)
+- [Get historical OHLC](/api-reference/coins/get-historical-ohlc)
+- [Get today OHLC](/api-reference/coins/get-today-ohlc)
+
+### People
+- [Get person by ID](/api-reference/people/get-person-by-id)
+
+### Tags
+- [List tags](/api-reference/tags/list-tags)
+- [Get tag by ID](/api-reference/tags/get-tag-by-id)
+
+### Tickers
+- [Get tickers for all active coins](/api-reference/tickers/get-tickers-for-all-active-coins)
+- [Get ticker for a specific coin](/api-reference/tickers/get-ticker-for-a-specific-coin)
+- [Get historical ticks for a specific coin](/api-reference/tickers/get-historical-ticks-for-a-specific-coin)
+
+### Exchanges
+- [List exchanges](/api-reference/exchanges/list-exchanges)
+- [Get exchange by ID](/api-reference/exchanges/get-exchange-by-id)
+- [List an exchange markets](/api-reference/exchanges/list-an-exchange-markets)
+
+### Tools
+- [Search](/api-reference/tools/search)
+- [Price converter](/api-reference/tools/price-converter)
+
+### Contracts
+- [List contracts platforms](/api-reference/contracts/list-contracts-platforms)
+- [Get all contract addressess for a given platform](/api-reference/contracts/get-all-contract-addressess-for-a-given-platform)
+
+### Changelog
+- Get id changelog for all coins 

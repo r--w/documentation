@@ -1,0 +1,240 @@
+asyncapi: 3.0.0
+info:
+  title: Coinpaprika Streaming API
+  version: 1.0.0
+  description: |
+    Welcome to the Coinpaprika Streaming API, which allows you to receive real-time cryptocurrency ticker data via WebSockets.
+
+    ### Getting Started
+
+    1.  **Get your API Key**: You need an API key to authenticate. Replace `"YOUR_API_KEY"` in the examples with your personal key, which you can get from your user dashboard.
+    2.  **Connect**: Establish a WebSocket connection to `wss://streaming.coinpaprika.com/ticks`.
+    3.  **Subscribe**: Send a `subscribe` message with the `ids` of the currencies you want to follow and the `quotes` you want them priced in.
+
+    ### Finding IDs
+
+    *   **Currency IDs (`ids`)**: To find the correct ID for a currency (e.g., `"btc-bitcoin"`), please refer to our API documentation for the [coins endpoint](https://docs.coinpaprika.com/api-reference/coins/get-coin-by-id).
+    *   **Quote Currencies (`quotes`)**: You can receive prices quoted in various currencies. The currently supported quote currencies are: `USD`, `BTC`, `ETH`, `BNB`, `MATIC`.
+
+    ### Connection Management
+
+    The connection is kept alive using the standard WebSocket ping/pong mechanism. The server sends a ping frame every 120 seconds; most client libraries automatically handle the required pong response. If the server doesn't receive a pong, it may close the connection. The example client below demonstrates a robust pattern for handling this by setting a timeout that will terminate and reconnect if a server ping is not received within a certain window.
+
+    ### Example Client (Node.js)
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+  x-codeSamples:
+    - lang: 'Node.js'
+      label: 'Node.js'
+      source: |
+        import WebSocket from "ws";
+
+        const API_KEY = "YOUR_API_KEY"; // Replace with your API key
+        const WS_URL = "wss://streaming.coinpaprika.com/ticks";
+
+        try {
+          const ws = new WebSocket(WS_URL, {
+            headers: {
+              Authorization: API_KEY,
+            },
+          });
+
+          let pingTimeout;
+
+          function heartbeat() {
+            // Terminate connection if server doesn't send a ping in time
+            clearTimeout(pingTimeout);
+            console.log("Heartbeat timeout. Terminating connection.");
+            ws.terminate();
+          }
+
+          ws.on("open", () => {
+            console.log("Connection established.");
+            pingTimeout = setTimeout(heartbeat, 130 * 1000); // Set initial timeout
+
+            const subscribePayload = {
+              event: "subscribe",
+              ids: ["btc-bitcoin", "eth-ethereum"],
+              quotes: ["USD", "BTC"],
+            };
+
+            ws.send(JSON.stringify(subscribePayload));
+            console.log("Subscribed to ticker updates for BTC and ETH.");
+          });
+
+          ws.on("ping", () => {
+            console.log("Received server ping. Resetting heartbeat timeout.");
+            clearTimeout(pingTimeout);
+            pingTimeout = setTimeout(heartbeat, 130 * 1000); // Reset timeout
+          });
+
+          ws.on("message", (data) => {
+            console.log("Received message:", JSON.parse(data.toString()));
+          });
+
+          ws.on("close", () => {
+            console.log("Connection closed.");
+            clearTimeout(pingTimeout);
+          });
+
+          ws.on("error", (err) => {
+            console.error("WebSocket error:", err);
+          });
+        } catch (e) {
+          console.error("Failed to connect:", e);
+        }
+    - lang: 'Python'
+      label: 'Python'
+      source: |
+        import websocket
+        import json
+        import time
+        import threading
+
+        API_KEY = "YOUR_API_KEY"  # Replace with your API key
+        WS_URL = "wss://streaming.coinpaprika.com/ticks"
+
+        def on_message(ws, message):
+            print(f"Received message: {json.loads(message)}")
+
+        def on_error(ws, error):
+            print(f"Error: {error}")
+
+        def on_close(ws, close_status_code, close_msg):
+            print("### Connection closed ###")
+
+        def on_open(ws):
+            print("Connection opened.")
+            subscribe_payload = {
+                "event": "subscribe",
+                "ids": ["btc-bitcoin", "eth-ethereum"],
+                "quotes": ["USD", "BTC"],
+            }
+            ws.send(json.dumps(subscribe_payload))
+            print("Subscribed to ticker updates for BTC and ETH.")
+
+        if __name__ == "__main__":
+            # websocket.enableTrace(True) # Uncomment for debug logging
+            ws_app = websocket.WebSocketApp(
+                WS_URL,
+                header={"Authorization": API_KEY},
+                on_open=on_open,
+                on_message=on_message,
+                on_error=on_error,
+                on_close=on_close
+            )
+            ws_app.run_forever()
+defaultContentType: application/json
+servers:
+  public:
+    host: streaming.coinpaprika.com
+    protocol: wss
+    description: Production api with ticker data
+    security:
+      - $ref: '#/components/securitySchemes/api-key'
+channels:
+  /ticks:
+    address: /ticks
+    messages:
+      sendMessage.message.0:
+        $ref: '#/components/messages/operation'
+      processMessage.message.0:
+        $ref: '#/components/messages/currency'
+operations:
+  sendMessage:
+    action: receive
+    channel:
+      $ref: '#/channels/~1ticks'
+    description: Send messages to the API
+    messages:
+      - $ref: '#/channels/~1ticks/messages/sendMessage.message.0'
+  processMessage:
+    action: send
+    channel:
+      $ref: '#/channels/~1ticks'
+    description: Messages that you receive from the API
+    messages:
+      - $ref: '#/channels/~1ticks/messages/processMessage.message.0'
+components:
+  messages:
+    operation:
+      summary: Subscribe to a topic on a single or multiple currencies.
+      payload:
+        $ref: '#/components/schemas/operation'
+      examples:
+        - payload:
+            event: subscribe
+            ids:
+              - btc-bitcoin
+              - eth-ethereum
+            quotes:
+              - USD
+              - BTC
+        - payload:
+            event: unsubscribe
+            ids:
+              - btc-bitcoin
+              - eth-ethereum
+    currency:
+      summary: Currency data.
+      payload:
+        $ref: '#/components/schemas/currency'
+      examples:
+        - payload:
+            id: cfx-conflux-network
+            sym: CFX
+            ts: 1676916987
+            quotes:
+              USD:
+                m: 608286188
+                p: 0.2909436491331033
+                v24h: 801851299.5519149
+  schemas:
+    operation:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+            - subscribe
+            - unsubscribe
+        ids:
+          type: array
+          items:
+            type: string
+            description: Coinpaprika currency id.
+        quotes:
+          type: array
+          items:
+            type: string
+            description: >-
+              Up to 5 quotes at once. Currently allowed values: USD, BTC, ETH,
+              BNB, MATIC, SOL
+    currency:
+      type: object
+      properties:
+        id:
+          type: string
+        sym:
+          type: string
+        ts:
+          type: integer
+        quotes:
+          type: object
+          patternProperties:
+            '^[A-Z]{3}$':
+              type: object
+              properties:
+                m:
+                  type: integer
+                p:
+                  type: number
+                v24h:
+                  type: number
+  securitySchemes:
+    api-key:
+      type: httpApiKey
+      name: Authorization
+      in: header
+

@@ -1,71 +1,200 @@
 ---
-title: Introduction
-description: "Welcome to the home of your new documentation"
+title: Welcome to CoinPaprika API documentation! 
+sidebarTitle: "Quickstart"
+description: "CoinPaprika provides reliable and accurate cryptocurrency data through a simple and powerful API. Access latest and historical market data for thousands of coins and exchanges."
 ---
 
-<img
-  className="block dark:hidden"
-  src="/images/hero-light.png"
-  alt="Hero Light"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.png"
-  alt="Hero Dark"
-/>
-
-## Setting up
-
-The first step to world-class documentation is setting up your editing environments.
-
 <CardGroup cols={2}>
   <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
+    title="Full API reference"
+    icon="bolt"
+    color="#CE0017"
+    href="/api-reference/introduction"
   >
-    Get your docs set up locally for easy development
+    Dive into the comprehensive API documentation and start building.
   </Card>
   <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
+    title="Check API status"
+    icon="signal"
+    color="#CE0017"
+    href="https://status.coinpaprika.com/"
   >
-    Preview your changes before you push to make sure they're perfect
+    View the real-time status of our API services.
   </Card>
 </CardGroup>
 
-## Make it yours
+## Make your first API call in 3 steps! For free, no credit card required.
 
-Update your docs to your brand and add valuable content for the best user conversion.
+<Tip>You can also make requests directly in our API Playground. Visit [GET Ticker by ID](/api-reference/tickers/get-ticker-for-a-specific-coin) to try it out.</Tip>
+
+In the next steps, we will make a GET request to the [Ticker](/api-reference/tickers/get-ticker-for-a-specific-coin) endpoint to get the latest price of Bitcoin (BTC). All you need is the Coin ID.
+
+- Coin ID: `btc-bitcoin`
+
+<Steps>
+<Step title="Make a GET request">
+Simply make a GET request to the following endpoint to fetch the latest ticker data for any coin. We'll use the Bitcoin ID to populate the endpoint in the format `https://api.coinpaprika.com/v1/tickers/{coin_id}`.
+
+<CodeGroup>
+```bash bash
+curl -X GET "https://api.coinpaprika.com/v1/tickers/btc-bitcoin"
+```
+```python python
+import requests
+
+response = requests.get("https://api.coinpaprika.com/v1/tickers/btc-bitcoin")
+print(response.json())
+```
+```javascript javascript
+fetch("https://api.coinpaprika.com/v1/tickers/btc-bitcoin")
+  .then(response => response.json())
+  .then(data => console.log(data));
+```
+</CodeGroup>
+</Step>
+<Step title="Get latest data for Bitcoin (BTC)">
+This will return a detailed response with the latest data for Bitcoin (BTC), which will look similar to this. In the next step, we will extract just the price of BTC in USD.
+```json Response [expandable]
+{
+    "id": "btc-bitcoin",
+    "name": "Bitcoin",
+    "symbol": "BTC",
+    "rank": 1,
+    "total_supply": 19883231,
+    "max_supply": 21000000,
+    "beta_value": 0.879448,
+    "first_data_at": "2010-07-17T00:00:00Z",
+    "last_updated": "2025-06-25T10:47:48Z",
+    "quotes": {
+        "USD": {
+            "price": 107077.69661924685,
+            "volume_24h": 23175936198.924427,
+            "volume_24h_change_24h": -44.15,
+            "market_cap": 2129051326372,
+            "market_cap_change_24h": 1.74,
+            "percent_change_15m": 0.04,
+            "percent_change_30m": 0.08,
+            "percent_change_1h": 0.37,
+            "percent_change_6h": 0.78,
+            "percent_change_12h": 0.92,
+            "percent_change_24h": 1.74,
+            "percent_change_7d": 2.27,
+            "percent_change_30d": -2.88,
+            "percent_change_1y": 73.78,
+            "ath_price": 111923.79452175781,
+            "ath_date": "2025-05-22T18:42:03Z",
+            "percent_from_price_ath": -4.33
+        }
+    }
+}
+```
+</Step>
+<Step title="Extract the price">
+The response contains rich data. You can extract the USD price by navigating to the `quotes.USD.price` field. Here is how you can modify the request to get just the price:
+<CodeGroup>
+```bash bash
+curl -s "https://api.coinpaprika.com/v1/tickers/btc-bitcoin" | jq '.quotes.USD.price'
+```
+```python python
+import requests
+
+response = requests.get("https://api.coinpaprika.com/v1/tickers/btc-bitcoin")
+price = response.json()["quotes"]["USD"]["price"]
+print(price)
+```
+```javascript javascript
+fetch("https://api.coinpaprika.com/v1/tickers/btc-bitcoin")
+  .then(response => response.json())
+  .then(data => {
+    const price = data.quotes.USD.price;
+    console.log(price);
+  });
+```
+</CodeGroup>
+And as a result, you will get the price of BTC in USD:
+```json quotes.USD.price
+107077.69661924685
+```
+Congratulations! You've successfully retrieved the latest price of Bitcoin!
+</Step>
+</Steps>
+
+<Card className="promo-card" href="/api-plans">
+  **Ready to go professional? Explore our API plans for higher rate limits and advanced features.**
+</Card>
+
+## Popular use cases
 
 <CardGroup cols={2}>
   <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
+    title="Portfolio Tracking"
+    icon="briefcase"
+    color="#CE0017"
+    href="/api-reference/tickers/get-tickers-for-all-active-coins"
   >
-    Customize your docs to your company's colors and brands
+    Build apps to monitor the value of cryptocurrency portfolios.
   </Card>
   <Card
-    title="Reference APIs"
-    icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
+    title="Market Analysis"
+    icon="chart-line"
+    color="#CE0017"
+    href="/api-reference/coins/get-historical-ohlc"
   >
-    Automatically generate endpoints from an OpenAPI spec
-  </Card>
-  <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/content/components/accordions"
-  >
-    Build interactive features and designs to guide your users
-  </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
+    Analyze market trends with historical and latest data.
   </Card>
 </CardGroup>
+<CardGroup cols={2}>
+  <Card
+    title="Trading Bots"
+    icon="robot"
+    color="#CE0017"
+    href="/api-reference/exchanges/list-an-exchange-markets"
+  >
+    Develop automated trading strategies using our reliable data feed.
+  </Card>
+  <Card
+    title="Crypto Research"
+    icon="book"
+    color="#CE0017"
+    href="/api-reference/coins/list-coins"
+  >
+    Access detailed information on thousands of coins and assets.
+  </Card>
+</CardGroup>
+
+## Explore on-chain & DeFi data
+<Card
+  title="Looking for DEX & on-chain data?"
+  icon="network-wired"
+  color="#CE0017"
+  href="https://docs.dexpaprika.com/"
+>
+  For latest data from Decentralized Exchanges (DEXes), including liquidity pools, swaps, and on-chain analytics, check out our sister project, **DexPaprika**.
+</Card>
+
+## Get support
+
+We're here to help you build with CoinPaprika.
+
+<CardGroup cols={2}>
+  <Card
+    title="Join Discord"
+    icon="discord"
+    color="#CE0017"
+    href="https://discord.gg/DhJge5TUGM"
+  >
+    Connect with our community for support and collaboration.
+  </Card>
+  <Card
+    title="Give feedback"
+    icon="message"
+    color="#CE0017"
+    href=" https://coinpaprika.com/contact/"
+  >
+    Have suggestions? We'd love to hear from you.
+  </Card>
+</CardGroup>
+<Note>
+  **Need more?** We offer enterprise plans with dedicated support, higher rate limits, and custom solutions.
+  [Contact our team](https://coinpaprika.com/contact/) to learn more.
+</Note>

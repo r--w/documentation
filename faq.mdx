@@ -1,0 +1,87 @@
+---
+title: 'Frequently asked questions'
+sidebarTitle: "FAQ"
+---
+
+## General
+
+<AccordionGroup>
+  <Accordion title="How many assets and exchanges are in your API?">
+    - We have more than 53k assets in our database, of which about 8-10k are active (i.e., where trading has taken place in the last 24 hours). The number of assets is growing all the time, while the number of active assets depends on the market situation.
+    - We have over 350 active exchanges, covering all of the mainstream CEX platforms, DEXes, and smaller exchanges as well.
+  </Accordion>
+  <Accordion title="What kind of data can I retrieve from the API?">
+    - Aggregated global volumes and market cap
+    - Current prices for assets
+    - Historical prices for assets
+    - OHLC with different time resolutions
+    - List of all assets (active/inactive)
+    - Information about exchanges
+    - List of contracts for a given platform
+    - Price conversions in different quotes
+    
+    For more, please visit our full [API Reference](/api-reference/introduction).
+  </Accordion>
+  <Accordion title="Are there API clients or SDKs?">
+    Yes, we have SDKs for popular programming languages such as Python, PHP, Go, and JS/TS. You can see the full list in our [Getting Started guide](/api-reference/introduction#sdks).
+
+    Before using an SDK provided by the community, please check its version and compatibility. If your programming language is not supported, don't worry; the API is provided in a standard JSON/REST format, and its implementation is usually straightforward.
+  </Accordion>
+</AccordionGroup>
+
+## Plans & pricing
+
+<AccordionGroup>
+  <Accordion title="How often do prices refresh?">
+    Prices from various markets are collected in near real-time. However, the prices available in the REST API have a resolution of up to 10 minutes, up to 3 minutes, or up to 1 minute, depending on your plan. In case you need fresher data, please get in touch with us about our Enterprise solutions.
+  </Accordion>
+    <Accordion title="Do you have WebSockets?">
+    Yes, WebSocket protocol is included in the Enterprise plan. Please contact us for details.
+  </Accordion>
+  <Accordion title="Are there any rate limits?">
+    We have a global limit of 10 requests/second per IP. Other limits on the number of queries are assigned to the corresponding plan and detailed in the documentation. When the limits are reached, the API returns HTTP codes `429` or `402`. You can find the monthly limits for each plan in our [Getting Started guide](/api-reference/introduction#rate-limits).
+  </Accordion>
+  <Accordion title="Where can I check my limits?">
+    Limits on the number of HTTP requests are defined according to the selected plan. They can be checked using the [/key/info](/api-reference/key/get-api-key-info) endpoint. Customers using the Enterprise package do not have a limit on the number of requests.
+  </Accordion>
+  <Accordion title="Can I use your API data commercially?">
+    Yes, the data can be used for commercial purposes inside the customer's company in all paid packages. However, only the **Enterprise** package allows data to be redistributed or shared, which requires a dedicated contract.
+  </Accordion>
+    <Accordion title="Do you provide SLA guarantees?">
+    Yes, in the **Enterprise** package, we guarantee 99.9% availability of our API.
+  </Accordion>
+</AccordionGroup>
+
+## Account & billing
+
+<AccordionGroup>
+  <Accordion title="What are my payment options? Do you have a refund policy?">
+    We accept fiat payments via Stripe for this service. Subscriptions are non-refundable, but if you have a monthly subscription, you may cancel it by the end of the current billing period.
+  </Accordion>
+  <Accordion title="How can I upgrade, downgrade or cancel my package?">
+    For packages sold in the SaaS model, you only need to make a change at the [CoinPaprika API Panel](https://coinpaprika.com/api/panel). For Enterprise contracts, please get in touch with your account manager.
+  </Accordion>
+  <Accordion title="How can I change credit/debit card details for payments?">
+    To add new or update existing card details, please log in to your CoinPaprika account and go to the "Billing and Credit Card setup" section on your [Invoices page](https://coinpaprika.com/my-account/invoices/). From there, you will be redirected to Stripe to manage your payment methods.
+  </Accordion>
+  <Accordion title="Can I purchase a plan for my company and get an invoice?">
+    Yes, you can purchase any of our plans for your company. After the payment is complete, an invoice with your company's details will be generated and available in your account. You can manage your billing information, including company details, at any time through the [Stripe Customer Portal](https://billing.stripe.com/p/login/14kcNig8a1xr6Ri4gg).
+  </Accordion>
+  <Accordion title="How do I manage my data in Stripe?">
+    You can use the [Stripe Customer Portal](https://billing.stripe.com/p/login/14kcNig8a1xr6Ri4gg) to manage your billing information.
+  </Accordion>
+</AccordionGroup>
+
+## Support
+
+<AccordionGroup>
+  <Accordion title="What is the email to contact/comment?">
+    For SaaS customers, please use the contact form on our website. For Enterprise customers, dedicated email/Slack and phone support are available.
+  </Accordion>
+  <Accordion title="Do you have real-time support?">
+    For Enterprise clients with the highest stability and security requirements, we provide a shared Slack channel and emergency phone support 24/7.
+  </Accordion>
+  <Accordion title="Where can I find the Terms of Service?">
+    The Terms of Service can be found [here](https://coinpaprika.com/terms-of-use/).
+  </Accordion>
+</AccordionGroup> 

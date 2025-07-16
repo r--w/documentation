@@ -1,0 +1,252 @@
+---
+title: "JavaScript SDK"
+description: "Official CoinPaprika API Node.js client library"
+---
+
+# CoinPaprika JavaScript SDK
+
+The official Node.js client library for the CoinPaprika API provides convenient access to cryptocurrency market data.
+
+## Installation
+
+Install the CoinPaprika JavaScript SDK using npm:
+
+```bash
+npm install @coinpaprika/api-nodejs-client
+```
+
+## Quick Start
+
+The following example shows how to create a client instance and fetch global market data and a list of all tickers.
+
+### Using Promises
+
+```javascript
+const CoinpaprikaAPI = require('@coinpaprika/api-nodejs-client');
+
+const client = new CoinpaprikaAPI();
+
+// Get global market data
+client.getGlobal()
+  .then(console.log)
+  .catch(console.error);
+
+// Get all tickers
+client.getAllTickers()
+  .then(console.log)
+  .catch(console.error);
+```
+
+### Using Async/Await
+
+```javascript
+const CoinpaprikaAPI = require('@coinpaprika/api-nodejs-client');
+
+async function getMarketData() {
+  const client = new CoinpaprikaAPI();
+  
+  try {
+    // Get global market overview
+    const globalData = await client.getGlobal();
+    console.log('Global Market Data:', globalData);
+
+    // Get all coins
+    const coins = await client.getCoins();
+    console.log(`\nFound ${coins.length} coins`);
+    
+  } catch (error) {
+    console.error('Error fetching market data:', error);
+  }
+}
+
+getMarketData();
+```
+
+## Common Use Cases
+
+### Getting Coin Information
+
+Fetch a list of all available coins and find a specific one by its ID.
+
+```javascript
+const CoinpaprikaAPI = require('@coinpaprika/api-nodejs-client');
+
+const client = new CoinpaprikaAPI();
+
+async function getCoinInfo() {
+  try {
+    // Get a specific coin by its ID
+    const bitcoin = await client.getCoin('btc-bitcoin');
+    console.log('Bitcoin Details:', bitcoin);
+
+  } catch (error) {
+    console.error('Error fetching coin info:', error);
+  }
+}
+
+getCoinInfo();
+```
+
+### Getting Ticker Data
+
+Fetch ticker information for all coins or for a specific coin.
+
+```javascript
+const CoinpaprikaAPI = require('@coinpaprika/api-nodejs-client');
+
+const client = new CoinpaprikaAPI();
+
+async function getTickerData() {
+  try {
+    // Get tickers for all coins, quoted in USD and BTC
+    const allTickers = await client.getAllTickers({
+      quotes: ['USD', 'BTC']
+    });
+    console.log('All Tickers Count:', allTickers.length);
+
+    // Get a specific ticker by coin ID
+    const btcTicker = await client.getAllTickers({
+      coinId: 'btc-bitcoin'
+    });
+    console.log('\nBitcoin Ticker:', btcTicker);
+    
+  } catch (error) {
+    console.error('Error fetching ticker data:', error);
+  }
+}
+
+getTickerData();
+```
+
+### Historical OHLCV Data
+
+Fetch historical Open-High-Low-Close-Volume (OHLCV) data for a specific coin.
+
+```javascript
+const CoinpaprikaAPI = require('@coinpaprika/api-nodejs-client');
+
+const client = new CoinpaprikaAPI();
+
+async function getHistoricalData() {
+  try {
+    // Get historical OHLCV data for Bitcoin for a specific date range
+    const ohlcvData = await client.getCoinsOHLCVHistorical({
+      coinId: "btc-bitcoin",
+      quote: "usd",
+      start: "2023-01-01",
+      end: "2023-01-07"
+    });
+
+    console.log('Bitcoin OHLCV Data (First week of 2023):');
+    console.log(ohlcvData);
+
+  } catch (error) {
+    console.error('Error fetching historical data:', error);
+  }
+}
+
+getHistoricalData();
+```
+
+### Historical Ticker Data
+
+Fetch historical ticker data for a specific coin within a date range and at a given interval.
+
+```javascript
+const CoinpaprikaAPI = require('@coinpaprika/api-nodejs-client');
+
+const client = new CoinpaprikaAPI();
+
+async function getHistoricalTicker() {
+  try {
+    // Get historical tickers for Bitcoin
+    const historicalTickers = await client.getAllTickers({
+      coinId: 'btc-bitcoin',
+      historical: {
+        start: '2023-01-01',
+        end: '2023-01-02',
+        limit: 10,
+        quote: 'usd',
+        interval: '1h'
+      }
+    });
+
+    console.log(`\nHistorical tickers found:`, historicalTickers);
+
+  } catch (error) {
+    console.error('Error fetching historical tickers:', error);
+  }
+}
+
+getHistoricalTicker();
+```
+
+## Error Handling
+
+The client returns a Promise, so you can handle errors by chaining a `.catch()` block or by using a `try...catch` block with async/await. The error object from the underlying `node-fetch` library will contain details about the failure.
+
+```javascript
+const CoinpaprikaAPI = require('@coinpaprika/api-nodejs-client');
+
+const client = new CoinpaprikaAPI();
+
+async function handleErrors() {
+  try {
+    // This will fail because the coin ID does not exist
+    await client.getCoin('invalid-coin-id');
+  } catch (error) {
+    // The API returns an error object, e.g., { error: 'id not found' }
+    console.error('Error caught:', error);
+  }
+}
+
+handleErrors();
+```
+
+## Available Methods
+
+### `getGlobal()`
+- **Description:** [Get global market overview.](/api-reference/global/get-market-overview-data)
+
+### `getCoins()`
+- **Description:** [List all coins available on Coinpaprika.](/api-reference/coins/list-coins)
+
+### `getCoin(coinId)`
+- **Description:** [Get a specific coin by its ID.](/api-reference/coins/get-coin-by-id)
+- **`coinId`**: e.g., `'btc-bitcoin'`
+
+### `getAllTickers(options)`
+- **Description:** [Get tickers for all coins or a specific coin.](/api-reference/tickers/get-tickers-for-all-active-coins)
+- **`options`** `(Object)`:
+  - **`coinId`** `(String)`: ID of a specific coin.
+  - **`quotes`** `(Array<String>)`: Quote currencies (e.g., `['USD', 'BTC']`).
+
+### `getAllTickers({ historical })`
+- **Description:** [Get historical ticker data.](/api-reference/tickers/get-historical-ticks-for-a-specific-coin)
+- **`historical`** `(Object)`:
+    - **`start`** `(String)`: Required. Start date (e.g., `'2023-01-01'`).
+    - **`end`** `(String)`: Optional. End date.
+    - **`limit`** `(Number)`: Optional. Data points limit.
+    - **`quote`** `(String)`: Optional. Quote currency (e.g., `'usd'`).
+    - **`interval`** `(String)`: Optional. Time interval (e.g., `'1h'`).
+
+### `getCoinsOHLCVHistorical(options)`
+- **Description:** [Get historical OHLCV data for a coin.](/api-reference/coins/get-historical-ohlc)
+- **`options`** `(Object)**:
+  - **`coinId`** `(String)`: Required. ID of a specific coin.
+  - **`quote`** `(String)`: Optional. Quote currency (defaults to `'usd'`).
+  - **`start`** `(String)`: Required. Start date.
+  - **`end`** `(String)`: Optional. End date.
+
+## Requirements
+
+- Node.js 12.0 or higher
+
+## Dependencies
+
+- `node-fetch`: For making HTTP requests.
+- `qs`: For query string handling.
+
+## License
+
+This library is available under the MIT license. See the [LICENSE file](https://github.com/coinpaprika/coinpaprika-api-nodejs-client/blob/master/LICENSE) for more info. 
