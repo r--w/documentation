@@ -128,8 +128,8 @@
     }
   },
   "logo": {
-    "light": "/logo/api_logo.svg",
-    "dark": "/logo/api_logo.svg",
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg",
     "href": "https://docs.coinpaprika.com"
   },
   "navbar": {
