@@ -1,3 +1,4 @@
+
 .card .icon {
   color: #FF5733;
 }
@@ -76,3 +77,21 @@ a.card.promo-card .title,
 a.card.promo-card .description {
     color: white !important;
 }
+
+/* Target markdown links specifically - exclude cards */
+p a[href]:not(.card), 
+div a[href]:not(.card), 
+span a[href]:not(.card),
+a[href]:not(.card) {
+  border-bottom-color: #10B981 !important;
+}
+
+/* Make sure cards keep their original border colors */
+.card, 
+a.card,
+[class*="card"] {
+  border-bottom-color: #CA312C !important;
+}
+
+
+

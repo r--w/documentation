@@ -51,8 +51,12 @@ Most of our API endpoints are available without an API key. However, for higher 
 To authenticate, include your API key as a Bearer token in the `Authorization` header of your request:
 
 ```bash
-curl -H "Authorization: Bearer YOUR_API_KEY" "https://api.coinpaprika.com/v1/users/me"
+curl -H "Authorization: Bearer YOUR_API_KEY" "https://api-pro.coinpaprika.com/v1/users/me"
 ```
+<Warning> 
+  The URL for the paid plans is different from the free plan. Check out our [pricing page](/api-plans) for specific details.
+</Warning>
+
 <Tip>You can get your API Key by visiting our official website [here](https://coinpaprika.com/api/)</Tip>
 
 ## Rate limits

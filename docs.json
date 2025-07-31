@@ -26,7 +26,7 @@
   "favicon": "/favicon.svg",
   "integrations": {
     "ga4": {
-      "measurementId": "G-DO_USTAWIENIA"
+      "measurementId": "G-P6B0V7Q7EJ"
     }
   },
   "contextual": {
@@ -48,6 +48,12 @@
                 "index",
                 "faq",
                 "api-plans"
+              ]
+            },
+            {
+              "group": "API Reference",
+              "pages": [
+                "get-started/api-rest-introduction"
               ]
             },
             {
@@ -106,7 +112,7 @@
       "anchors": [
         {
           "anchor": "API Playground",
-          "href": "https://docs.coinpaprika.com/api-reference/introduction",
+          "href": "https://docs.coinpaprika.com/api-reference/rest-api/introduction",
           "icon": "code"
         },
         {
@@ -169,6 +175,10 @@
           {
             "label": "Status",
             "href": "https://status.coinpaprika.com/"
+          },
+          {
+            "label": "API REST Reference",
+            "href": "https://docs.coinpaprika.com/api-reference/rest-api/introduction"
           }
         ]
       },
@@ -197,7 +207,18 @@
       "mode": "simple"
     }
   },
+  "styling": {
+    "eyebrows": "breadcrumbs",
+    "codeblocks": "dark",
+    "appearance": {
+      "default": "dark"
+    },
+    "css": [
+      "./style.css"
+    ]
+  },
   "seo": {
+    "indexing": "all",
     "metatags": {
       "title": "CoinPaprika API Docs | Latest & Historical Crypto Data",
       "description": "Official documentation for the CoinPaprika API. Access latest and historical cryptocurrency market data, including prices, volumes, market caps, and more.",
@@ -218,15 +239,5 @@
       "twitter:description": "Your complete guide to integrating low-latency and historical cryptocurrency data with the powerful CoinPaprika API.",
       "twitter:image": "https://coinpaprika.com/opengraph-image.png"
     }
-  },
-  "styling": {
-    "eyebrows": "breadcrumbs",
-    "codeblocks": "dark",
-    "appearance": {
-      "default": "dark"
-    },
-    "css": [
-      "./style.css"
-    ]
   }
 }
