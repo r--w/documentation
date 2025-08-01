@@ -1,0 +1,143 @@
+---
+title: 'REST API Reference'
+sidebarTitle: "REST API Reference"
+description: "Explore the comprehensive CoinPaprika REST API documentation. Access detailed endpoints, authentication, and examples for building powerful cryptocurrency applications."
+---
+## Ready to explore the full API?
+
+<Card
+  title="Launch full REST API reference"
+  icon="code"
+  color="#CE0017"
+  href="/api-reference/rest-api/introduction"
+  className="promo-card"
+>
+  **Click here to access the complete REST API documentation with all endpoints, examples, and interactive playground.**
+</Card>
+
+## Welcome to CoinPaprika REST API
+
+The CoinPaprika REST API provides comprehensive access to cryptocurrency market data, historical information, and real-time updates for over 50,000 crypto assets across 350+ exchanges.
+
+Our REST API is designed with developers in mind, offering:
+- **Simple HTTP requests** - Use standard GET, POST methods
+- **JSON responses** - Clean, structured data format
+- **Comprehensive coverage** - From basic price data to detailed analytics
+- **High reliability** - 99.9% uptime with enterprise-grade infrastructure
+
+## Popular endpoints
+
+<CardGroup cols={3}>
+  <Card
+    title="GET /tickers"
+    icon="list"
+    color="#CE0017"
+    href="/api-reference/tickers/get-tickers-for-all-active-coins"
+  >
+    Get ticker data for all active coins
+  </Card>
+  <Card
+    title="GET /tickers/{id}"
+    icon="info"
+    color="#CE0017"
+    href="/api-reference/tickers/get-ticker-for-a-specific-coin"
+  >
+    Get ticker data for a specific coin
+  </Card>
+  <Card
+    title="GET /coins"
+    icon="database"
+    color="#CE0017"
+    href="/api-reference/coins/list-coins"
+  >
+    List all available coins
+  </Card>
+  <Card
+    title="GET /exchanges"
+    icon="building"
+    color="#CE0017"
+    href="/api-reference/exchanges/list-exchanges"
+  >
+    List all supported exchanges
+  </Card>
+  <Card
+    title="GET /coins/{id}/ohlcv"
+    icon="chart-line"
+    color="#CE0017"
+    href="/api-reference/coins/get-historical-ohlc"
+  >
+    Get historical OHLCV data
+  </Card>
+  <Card
+    title="GET /global"
+    icon="globe"
+    color="#CE0017"
+    href="/api-reference/global/get-market-overview-data"
+  >
+    Get global market overview
+  </Card>
+</CardGroup>
+
+## Quick start
+
+Our API is designed to be simple and intuitive. Here's what you need to know:
+
+### Base URL
+All API endpoints use the following base URL (for free plan):
+```
+https://api.coinpaprika.com/v1/
+```
+For paid plans, the base URL is:
+```
+https://api-pro.coinpaprika.com/v1/
+```
+
+### Authentication
+Most endpoints are available without authentication, but we recommend using an API key for:
+- Higher rate limits
+- Premium features
+- Priority support
+
+To authenticate, include your API key as a Bearer token in the `Authorization` header of your request:
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" "https://api-pro.coinpaprika.com/v1/users/me"
+```
+
+<Tip>
+**Pro tip:** Start with our free tier - no credit card required. You can make up to 1,000 requests per day without authentication.
+</Tip>
+
+You can get your API key by checking out our [pricing page](https://coinpaprika.com/api/pricing/).
+
+### Example request
+Get the latest Bitcoin price with a simple GET request:
+
+```bash
+curl "https://api.coinpaprika.com/v1/tickers/btc-bitcoin"
+```
+
+## Need help getting started?
+
+<CardGroup cols={2}>
+  <Card
+    title="API Playground"
+    icon="code"
+    color="#CE0017"
+    href="/api-reference/rest-api/introduction"
+  >
+    Test endpoints directly in your browser with our interactive playground.
+  </Card>
+  <Card
+    title="SDK Libraries"
+    icon="download"
+    color="#CE0017"
+    href="/get-started/sdk-python"
+  >
+    Use our official SDKs for Python, JavaScript, PHP, and more.
+  </Card>
+</CardGroup>
+
+<Note>
+**Ready to go professional?** Explore our [API plans](/api-plans) for higher rate limits, dedicated support, and advanced features.
+</Note>

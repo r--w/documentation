@@ -1,4 +1,6 @@
 openapi: 3.1.0
+x-mcp:
+  enabled: true
 info:
   version: 1.7.10
   title: Coinpaprika API
