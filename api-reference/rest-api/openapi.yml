@@ -145,8 +145,6 @@ tags:
     description: Contract-related data
   - name: Changelog
     description: API changelog
-  - name: Deprecated
-    description: Deprecated endpoints
 paths:
   /key/info:
     get:
@@ -422,9 +420,14 @@ paths:
                 $ref: '#/components/schemas/tooManyRequestsError'
   /coins/{coin_id}/twitter:
     get:
-      summary: Get Twitter timeline tweets for a coin
+      summary: Get Twitter timeline tweets for a coin (DEPRECATED)
       operationId: getCoinTwitter
       description: |
+        **THIS ENDPOINT HAS BEEN DEPRECATED AND WILL BE REMOVED.**
+        Please refer to our API documentation for alternatives.
+
+        ---
+        *Original Description (for historical reference):*
         Returns the last 50 timeline tweets from the official Twitter profile for a given coin.
 
         **Available on the following API plans:**
@@ -435,6 +438,7 @@ paths:
         - Enterprise
 
         **Update interval:** Every 5 minutes.
+      deprecated: true
       parameters:
         - $ref: '#/components/parameters/coin_id'
       tags:
@@ -1544,10 +1548,14 @@ paths:
   /ticker:
     get:
       tags:
-        - Deprecated
+        - Tickers
       security: []
-      summary: Get ticker information for all coins [DEPRECATED]
-      operationId: getTickersDeprecated
+      summary: Get ticker information for all coins (DEPRECATED)
+      operationId: getTickers
+      description: |
+        **THIS ENDPOINT HAS BEEN DEPRECATED AND WILL BE REMOVED.**
+        Please use the new `/tickers` endpoint instead.
+      deprecated: true
       responses:
         '200':
           description: successful operation
@@ -1562,10 +1570,14 @@ paths:
   /ticker/{coin_id}:
     get:
       tags:
-        - Deprecated
+        - Tickers
       security: []
-      summary: Get ticker by ID [DEPRECATED]
-      operationId: getTickerByIdDeprecated
+      summary: Get ticker by ID (DEPRECATED)
+      operationId: getTickerById
+      description: |
+        **THIS ENDPOINT HAS BEEN DEPRECATED AND WILL BE REMOVED.**
+        Please use the new `/tickers/{coin-id}` endpoint instead.
+      deprecated: true
       parameters:
         - $ref: '#/components/parameters/coin_id'
       responses:
