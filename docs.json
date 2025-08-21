@@ -47,7 +47,8 @@
               "pages": [
                 "index",
                 "faq",
-                "api-plans"
+                "api-plans",
+                "tools/coverage"
               ]
             },
             {
