@@ -237,4 +237,3 @@ components:
       type: httpApiKey
       name: Authorization
       in: header
-
