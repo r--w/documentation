@@ -85,7 +85,7 @@
       },
       {
         "tab": "Streaming API",
-        "asyncapi": "api-reference/streaming-api/asyncapi.yml",
+        "asyncapi": "api-reference/streaming-api/asyncapi.yaml",
         "groups": [
           {
             "group": "Guides",
