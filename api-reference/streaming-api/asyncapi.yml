@@ -128,7 +128,7 @@ info:
 defaultContentType: application/json
 servers:
   public:
-    host: streaming.coinpaprika.com
+    url: wss://streaming.coinpaprika.com
     protocol: wss
     description: Production api with ticker data
     security:
@@ -234,6 +234,6 @@ components:
                   type: number
   securitySchemes:
     api-key:
-      type: httpApiKey
+      type: apiKey
       name: Authorization
       in: header
