@@ -43,6 +43,12 @@
           "tab": "Guides",
           "groups": [
             {
+              "group": "Tools",
+              "pages": [
+                "tools/coverage"
+              ]
+            },
+            {
               "group": "Get Started",
               "pages": [
                 "index",
