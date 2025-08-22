@@ -43,6 +43,12 @@
           "tab": "Guides",
           "groups": [
             {
+              "group": "Tools",
+              "pages": [
+                "tools/coverage"
+              ]
+            },
+            {
               "group": "Get Started",
               "pages": [
                 "index",
@@ -84,7 +90,7 @@
       },
       {
         "tab": "Streaming API",
-        "asyncapi": "api-reference/streaming-api/asyncapi.yml",
+        "asyncapi": "/api-reference/streaming-api/asyncapi.yml",
         "groups": [
           {
             "group": "Guides",
