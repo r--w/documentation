@@ -1,0 +1,174 @@
+---
+title: 'JSON-RPC Usage Guide'
+sidebarTitle: "JSON-RPC Integration"
+description: 'Quick guide to make direct API calls to the CoinPaprika MCP Server using JSON-RPC'
+---
+
+## Quick Start
+
+The JSON-RPC endpoint provides reliable access to cryptocurrency data for AI agents and custom applications.
+
+**Endpoint:** `https://mcp.coinpaprika.com/json-rpc`
+
+## Basic Usage
+
+### Search for cryptocurrencies
+
+```bash
+curl -X POST 'https://mcp.coinpaprika.com/json-rpc' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "search",
+      "arguments": {
+        "q": "bitcoin",
+        "limit": 5
+      }
+    }
+  }'
+```
+
+
+
+---
+
+## Response Format
+
+Results are returned in `result.content[0].text` as stringified JSON:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"data\": \"...\"}"
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Error Handling
+
+The MCP server returns standard JSON-RPC error codes. Upstream HTTP statuses may map to messages like `400/402/403/429`. Inspect the JSON-RPC `error.message` field for specific error details.
+
+
+## Best Practices
+
+- **Implement caching** to reduce redundant requests
+- **Use reasonable retry policies** with jitter for network resilience
+- **Handle errors gracefully** with proper fallback mechanisms
+- **Consider batching** multiple requests when possible
+
+---
+
+## Available Tools
+
+To discover all available tools, use the `tools/list` method:
+
+```bash
+curl -X POST 'https://mcp.coinpaprika.com/json-rpc' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/list",
+    "params": {}
+  }'
+```
+
+### Tool Call Structure
+
+All tools follow this structure:
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| `name` | Tool name | `"search"` |
+| `arguments` | Tool-specific parameters | `{"q": "bitcoin", "limit": 5}` |
+
+### Available Tools
+
+| Tool | Description | Arguments | Example |
+| --- | --- | --- | --- |
+| getGlobal | Market overview | none | `{}` |
+| getCoins | List coins | limit: number (50) | `{"limit": 25}` |
+| getCoinById | Coin details | **coinId**: string | `{"coinId": "btc-bitcoin"}` |
+| getCoinEvents | Events for a coin | **coinId**: string; limit: number (50) | `{"coinId": "btc-bitcoin", "limit": 10}` |
+| getCoinExchanges | Exchanges for a coin | **coinId**: string; limit: number (50) | `{"coinId": "btc-bitcoin", "limit": 10}` |
+| getCoinMarkets | Markets for a coin | **coinId**: string; quotes: string; limit: number (50) | `{"coinId": "btc-bitcoin", "quotes": "usd,btc", "limit": 10}` |
+| getTickers | All tickers | quotes: string; limit: number (50) | `{"quotes": "usd", "limit": 10}` |
+| getTickersById | Ticker for coin | **coinId**: string; quotes: string | `{"coinId": "btc-bitcoin", "quotes": "usd"}` |
+| getPeopleById | Person details | **personId**: string | `{"personId": "satoshi-nakamoto"}` |
+| getTags | List tags | additionalFields: string; limit: number (50) | `{"additionalFields": "id,name", "limit": 10}` |
+| getTagById | Tag details | **tagId**: string; additionalFields: string | `{"tagId": "defi"}` |
+| getExchanges | List exchanges | quotes: string; limit: number (50) | `{"quotes": "usd", "limit": 10}` |
+| getExchangeByID | Exchange details | **exchangeId**: string; quotes: string | `{"exchangeId": "binance", "quotes": "usd"}` |
+| getExchangeMarkets | Markets on exchange | **exchangeId**: string; quotes: string; limit: number (50) | `{"exchangeId": "binance", "quotes": "usd", "limit": 10}` |
+| getPlatforms | List contract platforms | limit: number (50) | `{"limit": 10}` |
+| getContracts | Contracts for a platform | **platformId**: string; limit: number (50) | `{"platformId": "eth-ethereum", "limit": 10}` |
+| getTickerByContract | Ticker by contract address | **platformId**: string; **contractAddress**: string | `{"platformId": "eth-ethereum", "contractAddress": "0x..."}` |
+| priceConverter | Convert base to quote | **baseCurrencyId**: string; **quoteCurrencyId**: string; amount: number (0) | `{"baseCurrencyId": "btc-bitcoin", "quoteCurrencyId": "usd", "amount": 1}` |
+| search | Search currencies, exchanges, icos, people, tags | **q**: string; categories: string; modifier: string; limit: number (50) | `{"q": "btc", "categories": "currencies,exchanges", "modifier": "symbol", "limit": 5}` |
+
+### Call Pattern Template
+
+```bash
+curl -sS -X POST 'https://mcp.coinpaprika.com/json-rpc' \
+  -H 'content-type: application/json' \
+  --data '{
+    "jsonrpc":"2.0",
+    "id":1,
+    "method":"tools/call",
+    "params":{"name":"<TOOL>","arguments":{ /* see table */ }}
+  }'
+```
+
+---
+
+## What's Next?
+
+<CardGroup cols={2}>
+  <Card
+    title="Connect Claude Desktop or Cursor"
+    icon="plug"
+    href="/mcp-connect-claude-cursor"
+  >
+    Set up AI-powered access to cryptocurrency data
+  </Card>
+  <Card
+    title="Explore Available Tools"
+    icon="wrench"
+    href="/api-reference/rest-api/introduction"
+  >
+    Discover all the cryptocurrency data tools available
+  </Card>
+</CardGroup>
+
+
+## Need Help?
+
+<CardGroup cols={2}>
+  <Card
+    title="Join Our Discord"
+    icon="discord"
+    href="https://discord.gg/DhJge5TUGM"
+  >
+    Connect with our community for real-time support
+  </Card>
+  <Card
+    title="Direct Support"
+    icon="envelope"
+    href="mailto:support@coinpaprika.com"
+  >
+    Contact our team for technical assistance
+  </Card>
+</CardGroup>
+

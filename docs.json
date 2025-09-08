@@ -49,6 +49,14 @@
               ]
             },
             {
+              "group": "Model Context Protocol (MCP)",
+              "pages": [
+                "mcp-introduction",
+                "mcp-connect-claude-cursor",
+                "mcp-json-rpc-usage"
+              ]
+            },
+            {
               "group": "Get Started",
               "pages": [
                 "index",
@@ -101,18 +109,19 @@
           }
         ]
       },
-      {
-        "tab": "On-chain & DEX Data",
-        "pages": [
-          "dexpaprika"
-        ]
-      },
-      {
-        "tab": "Changelog",
-        "pages": [
-          "changelog"
-        ]
-      }
+      
+        {
+          "tab": "On-chain & DEX Data",
+          "pages": [
+            "dexpaprika"
+          ]
+        },
+        {
+          "tab": "Changelog",
+          "pages": [
+            "changelog"
+          ]
+        }
     ],
     "global": {
       "anchors": [

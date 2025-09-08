@@ -1,0 +1,214 @@
+---
+title: 'Connect Claude Desktop or Cursor'
+sidebarTitle: "Claude & Cursor Integration"
+description: 'Step-by-step guide to connect your AI development environment to the CoinPaprika MCP Server for real-time cryptocurrency data access'
+---
+
+## What you'll learn
+
+This tutorial shows you how to connect Claude Desktop or Cursor to the CoinPaprika MCP Server to access real-time cryptocurrency data. By the end, you'll have live crypto market information available directly in your AI conversations.
+
+
+
+## Prerequisites
+
+Before connecting to the CoinPaprika MCP server, ensure you have:
+
+- [Claude Desktop](https://claude.ai/desktop) or [Cursor](https://cursor.sh/) installed on your system
+- Basic familiarity with configuration files
+- Stable internet connection
+
+---
+
+## Quick Configuration
+
+### Claude Desktop
+
+<Steps>
+<Step title="Locate your configuration file">
+Find your Claude Desktop configuration file:
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%AppData%/Claude/claude_desktop_config.json`
+- **Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+
+</Step>
+
+<Step title="Add the MCP server configuration">
+If the file doesn't exist, create it with this content:
+```json
+{
+  "mcpServers": {
+    "coinpaprika": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://mcp.coinpaprika.com/sse"]
+    }
+  }
+}
+```
+
+If the file already exists, add our server to the existing `mcpServers` object:
+```json
+"coinpaprika": {
+  "command": "npx",
+  "args": ["mcp-remote", "https://mcp.coinpaprika.com/sse"]
+}
+```
+
+<Frame>
+  <img src="/images/Claude1.png" alt="Screenshot showing the configuration file open in a text editor with the MCP server config added" />
+</Frame>
+</Step>
+
+<Step title="Restart Claude Desktop">
+Save the file and restart Claude Desktop for the changes to take effect.
+</Step>
+</Steps>
+
+### Cursor
+
+<Steps>
+<Step title="Open Cursor settings">
+1. In Cursor, go to **Settings** (Cmd/Ctrl + ,)
+2. Navigate to **Tools & Integrations** in the left sidebar
+3. Click **New MCP server**
+
+<Frame>
+  <img src="/images/Cursor2.png" alt="Screenshot showing Cursor settings panel open" />
+</Frame>
+</Step>
+
+<Step title="Configure MCP Server">
+1. In the MCP server configuration dialog, enter:
+   - **Server name**: `coinpaprika`
+   - **Type**: `url` (select from dropdown)
+   - **URL**: `https://mcp.coinpaprika.com/sse`
+2. Click **Install** to complete the setup
+3. Restart Cursor if prompted
+
+<Frame>
+  <img src="/images/Cursor1.png" alt="Screenshot showing the MCP server configuration form filled out" />
+</Frame>
+</Step>
+</Steps>
+
+<Tip>
+  **Alternative method**: You can also configure Cursor to use any MCP servers configured in Claude Desktop by enabling the Claude Desktop integration in Cursor's settings.
+</Tip>
+
+
+## Verification
+
+After restarting, you should see:
+
+- **CoinPaprika tools** available in your AI assistant
+- **Cryptocurrency data access** through natural language queries
+- **Real-time market information** at your fingertips
+
+<Frame>
+  <img src="/images/Claude2.png" alt="Screenshot showing the AI assistant interface with CoinPaprika tools visible in the tools list" />
+</Frame>
+
+
+## Example Usage
+
+Once connected, you can ask questions like:
+
+### Basic market data
+- "What's the current price of Bitcoin?"
+- "Show me the top 10 cryptocurrencies by market cap"
+- "What's the 24-hour volume for Ethereum?"
+
+### Advanced queries
+- "Search for tokens related to DeFi"
+- "Compare the market caps of Bitcoin and Ethereum"
+- "What are the biggest gainers in the last 24 hours?"
+
+### Portfolio analysis
+- "How has my portfolio performed today?"
+- "What's the total market cap of all cryptocurrencies?"
+- "Show me the correlation between Bitcoin and altcoins"
+
+
+## Troubleshooting
+
+<AccordionGroup>
+<Accordion title="Tools not appearing">
+**Symptoms**: CoinPaprika tools don't show up in your AI assistant.
+
+**Solutions**:
+1. Ensure you've restarted the application after configuration
+2. Check that the configuration file syntax is valid JSON
+3. Verify the `mcp-remote` package is available via npx
+4. Try removing and re-adding the MCP server configuration
+</Accordion>
+
+<Accordion title="Connection errors">
+**Symptoms**: Getting connection timeouts or errors.
+
+**Solutions**:
+1. Check your internet connection is stable
+2. Verify the MCP server is operational at [status.coinpaprika.com](https://status.coinpaprika.com/)
+3. Ensure no firewall is blocking the connection
+4. Try using the JSON-RPC endpoint instead: `https://mcp.coinpaprika.com/json-rpc`
+</Accordion>
+
+<Accordion title="Configuration file not found">
+**Symptoms**: Can't locate the configuration file.
+
+**Solutions**:
+1. Create the directory structure if it doesn't exist:
+   - **macOS**: `mkdir -p ~/Library/Application\ Support/Claude/`
+   - **Windows**: Create the `Claude` folder in your `%APPDATA%` directory
+2. Create the configuration file manually
+3. Ensure proper JSON syntax
+</Accordion>
+</AccordionGroup>
+
+---
+
+## What's Next?
+
+Now that you're connected:
+
+<CardGroup cols={2}>
+  <Card
+    title="Learn JSON-RPC Usage"
+    icon="code"
+    href="/mcp-json-rpc-usage"
+  >
+    Make direct API calls to our MCP server with practical examples
+  </Card>
+  <Card
+    title="Explore Available Tools"
+    icon="wrench"
+    href="/api-reference/rest-api/introduction"
+  >
+    Discover all the cryptocurrency data tools at your disposal
+  </Card>
+</CardGroup>
+
+---
+
+## Need Help?
+
+<CardGroup cols={2}>
+  <Card
+    title="Join Our Discord"
+    icon="discord"
+    href="https://discord.gg/DhJge5TUGM"
+  >
+    Connect with our community for real-time support and discussions
+  </Card>
+  <Card
+    title="Direct Support"
+    icon="envelope"
+    href="mailto:support@coinpaprika.com"
+  >
+    Contact our team for technical assistance and custom integrations
+  </Card>
+</CardGroup>
+
+<Note>
+  **Building something amazing?** Share your CoinPaprika MCP integrations with our community! We love seeing what developers build with our tools. [Reach out](mailto:support@coinpaprika.com) to showcase your work.
+</Note>
