@@ -7,6 +7,10 @@ description: "Official CoinPaprika API PHP client library"
 
 The official PHP client library for the CoinPaprika API provides convenient access to cryptocurrency market data. It uses Guzzle for HTTP requests and the JMS/Serializer for handling API responses.
 
+<Tip>
+  See also: [REST API Reference](/api-reference/rest-api/introduction), [Coverage Checker](/tools/coverage), [Ticker endpoint](/api-reference/tickers/get-ticker-for-a-specific-coin)
+</Tip>
+
 ## Installation
 
 Install the CoinPaprika PHP SDK via Composer:
@@ -218,6 +222,23 @@ try {
 - `getIcos(array $parameters = [])` - Get a list of ICOs.
 - `setApiKey(string $apiKey)` - Set the API key after client initialization.
 - [`getOHLCV(string $id, string $interval)`](/api-reference/coins/get-historical-ohlc) - Get the latest OHLCV data.
+
+### FAQs
+
+<AccordionGroup>
+  <Accordion title="How do I authenticate with the PHP SDK?">
+    Pass the API key to the client constructor: <code>new \Coinpaprika\Client(null, null, 'YOUR_API_KEY')</code> for Pro features.
+  </Accordion>
+  <Accordion title="Where can I get a coin_id for methods like getTickerByCoinId?">
+    Look up IDs using the [Coverage Checker](/tools/coverage); e.g., <code>btc-bitcoin</code>.
+  </Accordion>
+  <Accordion title="How do I fetch historical data?">
+    Use <code>getHistoricalTickerByCoinId($id, $start, $interval)</code> with Pro access; for OHLCV see the REST endpoint.
+  </Accordion>
+  <Accordion title="How to handle 429 Too Many Requests?">
+    Catch <code>RateLimitExceededException</code> or Guzzle client errors and retry with backoff.
+  </Accordion>
+</AccordionGroup>
 
 ## Examples Repository
 

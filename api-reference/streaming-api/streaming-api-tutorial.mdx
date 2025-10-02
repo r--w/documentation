@@ -243,3 +243,23 @@ This tutorial provides a solid foundation. Here are a few ideas for expanding yo
 - **No Data**: Verify the currency IDs are correct (e.g., `"btc-bitcoin"`, `"eth-ethereum"`)
 
 Happy coding! 
+
+### FAQs
+
+<AccordionGroup>
+  <Accordion title="What is the quickest way to test the crypto streaming API?">
+    Use the Node.js snippet in this guide. Replace `YOUR_API_KEY` and run `node index.js`.
+  </Accordion>
+  <Accordion title="Where do I find coin IDs for subscriptions?">
+    Use the REST API `GET /coins` or the [Coverage Checker](/tools/coverage) to look up canonical IDs (e.g., `btc-bitcoin`).
+  </Accordion>
+  <Accordion title="How do I switch quote currencies?">
+    Change the `quotes` array in the subscribe payload (e.g., `['USD', 'BTC']).
+  </Accordion>
+  <Accordion title="How should I handle reconnections?">
+    Implement a heartbeat and reconnect with exponential backoff. See the sample code’s heartbeat logic.
+  </Accordion>
+  <Accordion title="Is streaming data included in paid plans?">
+    WebSockets are available on Enterprise; contact us if you need real-time streaming in production.
+  </Accordion>
+</AccordionGroup>
