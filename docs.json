@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "willow",
-  "name": "CoinPaprika API",
+  "name": "Crypto API - Price & Market Data API | CoinPaprika",
   "colors": {
     "primary": "#CA312C",
     "dark": "#CA312C",
@@ -180,11 +180,11 @@
         "header": "Resources",
         "items": [
           {
-            "label": "API",
+            "label": "CoinPaprika Crypto API",
             "href": "https://coinpaprika.com/api/"
           },
           {
-            "label": "API Pricing",
+            "label": "CoinPaprika Crypto API Pricing",
             "href": "https://coinpaprika.com/api/pricing"
           },
           {
@@ -192,7 +192,7 @@
             "href": "https://status.coinpaprika.com/"
           },
           {
-            "label": "API REST Reference",
+            "label": "REST API Reference",
             "href": "https://docs.coinpaprika.com/api-reference/rest-api/introduction"
           }
         ]
@@ -235,13 +235,13 @@
   "seo": {
     "indexing": "all",
     "metatags": {
-      "title": "CoinPaprika API Docs | Latest & Historical Crypto Data",
+      "title": "Crypto API - Price & Market Data API | CoinPaprika",
       "description": "Official documentation for the CoinPaprika API. Access latest and historical cryptocurrency market data, including prices, volumes, market caps, and more.",
       "keywords": "CoinPaprika, CoinPaprika API, crypto API, cryptocurrency API, blockchain data, real-time crypto prices, historical crypto data, token data, developer API, REST API, WebSocket API",
       "author": "CoinPaprika",
       "robots": "index, follow",
       "googlebot": "index, follow",
-      "og:title": "CoinPaprika API Docs | Latest Low-Latency & Historical Crypto Data",
+      "og:title": "Crypto API - Price & Market Data API | CoinPaprika",
       "og:description": "The official developer documentation for the CoinPaprika API. Find guides, API references, and tutorials to integrate comprehensive crypto data.",
       "og:type": "website",
       "og:url": "https://docs.coinpaprika.com",
@@ -250,7 +250,7 @@
       "twitter:card": "summary_large_image",
       "twitter:site": "@coinpaprika",
       "twitter:creator": "@coinpaprika",
-      "twitter:title": "CoinPaprika API Docs",
+      "twitter:title": "Crypto API - Price & Market Data API | CoinPaprika",
       "twitter:description": "Your complete guide to integrating low-latency and historical cryptocurrency data with the powerful CoinPaprika API.",
       "twitter:image": "https://coinpaprika.com/opengraph-image.png"
     }

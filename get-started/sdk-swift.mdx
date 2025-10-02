@@ -242,6 +242,23 @@ func getMarketData() async {
 - [`search(...)`](/api-reference/tools/search) - Search across categories.
 - [`priceConverter(...)`](/api-reference/tools/price-converter) - Convert between currencies.
 
+### FAQs
+
+<AccordionGroup>
+  <Accordion title="How do I use the Pro API in Swift?">
+    Set <code>Coinpaprika.Configuration.baseUrl</code> to the Pro endpoint once at app startup; authenticate at the edge as needed.
+  </Accordion>
+  <Accordion title="Where can I find coin IDs for methods like ticker(id:)?">
+    Use the [Coverage Checker](/tools/coverage) to obtain canonical IDs (e.g., <code>btc-bitcoin</code>).
+  </Accordion>
+  <Accordion title="How do I fetch historical ticks/ohlcv?">
+    Configure the Pro base URL and call the relevant historical APIs with <code>start</code>/<code>end</code> and <code>quote</code>.
+  </Accordion>
+  <Accordion title="What is the recommended error handling?">
+    Inspect the failure case of <code>Result</code> and map to app errors; for 429 responses, back off and retry.
+  </Accordion>
+</AccordionGroup>
+
 ## Requirements
 
 - iOS 10.0+ / macOS 10.12+ / watchOS 3.0+ / tvOS 10.0+

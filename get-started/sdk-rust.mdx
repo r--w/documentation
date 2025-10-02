@@ -164,3 +164,20 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
 ### Changelog
 - Get id changelog for all coins 
+
+### FAQs
+
+<AccordionGroup>
+  <Accordion title="How do I authenticate with the Rust SDK?">
+    Construct the client with your API key using <code>Client::with_key("YOUR_API_KEY")</code> when calling Pro endpoints.
+  </Accordion>
+  <Accordion title="How do I find the correct coin_id?">
+    Use the [Coverage Checker](/tools/coverage) to resolve canonical IDs such as <code>btc-bitcoin</code>.
+  </Accordion>
+  <Accordion title="Can I get historical data in Rust?">
+    Yes—use the REST historical endpoints via the client methods that accept <code>start</code>/<code>end</code> parameters; an API key is required.
+  </Accordion>
+  <Accordion title="What’s the error handling approach?">
+    Propagate <code>Result</code> and map HTTP errors (e.g., 429) to retry/backoff logic in your async runtime.
+  </Accordion>
+</AccordionGroup> 

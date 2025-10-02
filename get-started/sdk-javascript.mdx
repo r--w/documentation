@@ -7,6 +7,10 @@ description: "Official CoinPaprika API Node.js client library"
 
 The official Node.js client library for the CoinPaprika API provides convenient access to cryptocurrency market data.
 
+<Tip>
+  See also: [REST API Reference](/api-reference/rest-api/introduction), [Coverage Checker](/tools/coverage), [Historical OHLCV](/api-reference/coins/get-historical-ohlc)
+</Tip>
+
 ## Installation
 
 Install the CoinPaprika JavaScript SDK using npm:
@@ -250,3 +254,20 @@ handleErrors();
 ## License
 
 This library is available under the MIT license. See the [LICENSE file](https://github.com/coinpaprika/coinpaprika-api-nodejs-client/blob/master/LICENSE) for more info. 
+
+### FAQs
+
+<AccordionGroup>
+  <Accordion title="How do I authenticate with the JS SDK?">
+    Create the client with your key when needed or configure HTTP headers before calls; free endpoints work without a key.
+  </Accordion>
+  <Accordion title="How do I find a coin_id for methods like getCoin or getAllTickers?">
+    Use the [Coverage Checker](/tools/coverage) to look up canonical IDs such as <code>btc-bitcoin</code>.
+  </Accordion>
+  <Accordion title="How do I get historical OHLCV data?">
+    Use <code>getCoinsOHLCVHistorical({ coinId, start, end, quote })</code> with an API key.
+  </Accordion>
+  <Accordion title="What’s the recommended error handling pattern?">
+    Wrap calls in <code>try/catch</code> (async/await) or chain <code>.catch()</code>, and back off on 429 Too Many Requests.
+  </Accordion>
+</AccordionGroup> 

@@ -141,6 +141,23 @@ Used to fetch ticker price and market data.
 - [`getTicker(id, quotes)`](/api-reference/tickers/get-ticker-for-a-specific-coin): Retrieves the ticker for a specific coin ID.
 - [`getTickers(quotes, page)`](/api-reference/tickers/get-tickers-for-all-active-coins): Lists tickers for all coins.
 
+### FAQs
+
+<AccordionGroup>
+  <Accordion title="How do I authenticate with Retrofit?">
+    Add an <code>Interceptor</code> to your OkHttp client to inject the API key header when using Pro endpoints.
+  </Accordion>
+  <Accordion title="Where do I find coin IDs for service methods?">
+    Use the [Coverage Checker](/tools/coverage) to discover canonical IDs (e.g., <code>btc-bitcoin</code>).
+  </Accordion>
+  <Accordion title="How do I request historical OHLCV?">
+    Call the historical OHLCV service method with required parameters; Pro access is required for history.
+  </Accordion>
+  <Accordion title="What’s the recommended error handling?")>
+    Catch <code>HttpException</code> for non-2xx responses (e.g., 404, 429) and <code>IOException</code> for network failures; apply backoff before retries.
+  </Accordion>
+</AccordionGroup>
+
 ## Error Handling
 
 When using this library, you should wrap your API calls in a `try-catch` block to handle potential exceptions, such as `HttpException` from Retrofit for non-2xx responses or `IOException` for network failures.

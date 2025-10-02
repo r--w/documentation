@@ -1,9 +1,13 @@
 ---
-title: 'REST API Reference'
+title: 'CoinPaprika Crypto API — REST Reference'
 sidebarTitle: "REST API Reference"
-description: "Explore the comprehensive CoinPaprika REST API documentation. Access detailed endpoints, authentication, and examples for building powerful cryptocurrency applications."
+description: "Crypto API for developers: real-time cryptocurrency prices, market data, and historical data via REST. Build with CoinPaprika's reliable crypto data API."
 ---
-## Ready to explore the full API?
+## CoinPaprika crypto API overview
+
+<Tip>
+  See also: [Coverage Checker](/tools/coverage), [Ticker endpoint](/api-reference/tickers/get-ticker-for-a-specific-coin), [Historical OHLCV](/api-reference/coins/get-historical-ohlc), [Search](/api-reference/tools/search), [Price converter](/api-reference/tools/price-converter)
+</Tip>
 
 <Card
   title="Launch full REST API reference"
@@ -15,9 +19,9 @@ description: "Explore the comprehensive CoinPaprika REST API documentation. Acce
   **Click here to access the complete REST API documentation with all endpoints, examples, and interactive playground.**
 </Card>
 
-## Welcome to CoinPaprika REST API
+## Crypto price API and cryptocurrency data API
 
-The CoinPaprika REST API provides comprehensive access to cryptocurrency market data, historical information, and real-time updates for over 50,000 crypto assets across 350+ exchanges.
+The CoinPaprika REST API provides comprehensive access to real-time cryptocurrency market data, historical prices, volumes, and market cap for over 50,000 assets across 350+ exchanges.
 
 Our REST API is designed with developers in mind, offering:
 - **Simple HTTP requests** - Use standard GET, POST methods
@@ -25,7 +29,7 @@ Our REST API is designed with developers in mind, offering:
 - **Comprehensive coverage** - From basic price data to detailed analytics
 - **High reliability** - 99.9% uptime with enterprise-grade infrastructure
 
-## Popular endpoints
+## Popular crypto API endpoints
 
 <CardGroup cols={3}>
   <Card
@@ -117,7 +121,7 @@ Get the latest Bitcoin price with a simple GET request:
 curl "https://api.coinpaprika.com/v1/tickers/btc-bitcoin"
 ```
 
-## Need help getting started?
+## CoinPaprika API support
 
 <CardGroup cols={2}>
   <Card
@@ -141,3 +145,23 @@ curl "https://api.coinpaprika.com/v1/tickers/btc-bitcoin"
 <Note>
 **Ready to go professional?** Explore our [API plans](/api-plans) for higher rate limits, dedicated support, and advanced features.
 </Note>
+
+### FAQs
+
+<AccordionGroup>
+  <Accordion title="What is a crypto price API?">
+    An HTTP API that returns real-time and historical cryptocurrency prices, volumes, and market cap. Use our REST endpoints for server-side and batch use cases.
+  </Accordion>
+  <Accordion title="Is the CoinPaprika crypto API free?">
+    Yes, there’s a free tier with generous limits. Paid plans unlock higher limits and more data history.
+  </Accordion>
+  <Accordion title="How do I get historical cryptocurrency data?">
+    Use `GET /coins/{id}/ohlcv/historical` and specify `start`, optional `end`, and `interval`.
+  </Accordion>
+  <Accordion title="What rate limits apply?">
+    Limits vary by plan; see the Rate Limits section or the Pricing page. When exceeded, the API returns HTTP `429`/`402`.
+  </Accordion>
+  <Accordion title="Do you provide WebSocket data too?">
+    Yes. Use the Streaming API for live ticks; REST covers request/response use cases.
+  </Accordion>
+</AccordionGroup>

@@ -7,6 +7,10 @@ description: "Official CoinPaprika API Python client library"
 
 The official Python client library for the CoinPaprika API provides convenient access to cryptocurrency market data.
 
+<Tip>
+  See also: [REST API Reference](/api-reference/rest-api/introduction), [Coverage Checker](/tools/coverage), [Historical OHLCV](/api-reference/coins/get-historical-ohlc)
+</Tip>
+
 ## Installation
 
 Install the CoinPaprika Python SDK using pip:
@@ -280,3 +284,20 @@ except CoinpaprikaAPIException as e:
 ## License
 
 This library is available under the Apache License 2.0. See the [LICENSE file](https://github.com/coinpaprika/coinpaprika-api-python-client/blob/main/LICENSE) for more info. 
+
+### FAQs
+
+<AccordionGroup>
+  <Accordion title="How do I authenticate with the Python SDK?">
+    Initialize <code>Client(api_key="YOUR_API_KEY")</code> for Pro features and higher limits. Free usage works with <code>Client()</code> for public endpoints.
+  </Accordion>
+  <Accordion title="Where do I find the coin_id (e.g., btc-bitcoin)?">
+    Use the [Coverage Checker](/tools/coverage) or the REST <code>/coins</code> endpoint to look up canonical IDs.
+  </Accordion>
+  <Accordion title="How do I fetch historical OHLCV?">
+    Use <code>client.ohlcv(coin_id, start=..., end=...)</code> with an API key. See the OHLCV example above.
+  </Accordion>
+  <Accordion title="How should I handle rate limits and errors?">
+    Catch SDK exceptions (e.g., <code>CoinpaprikaAPITooManyRequestsException</code>) and back off before retrying.
+  </Accordion>
+</AccordionGroup> 

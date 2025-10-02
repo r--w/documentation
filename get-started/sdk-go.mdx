@@ -415,6 +415,23 @@ The Go SDK is organized into services that correspond to the API endpoints.
 - [`client.Tools.Search(query, options)`](/api-reference/tools/search) - Search for assets.
 - [`client.Tools.PriceConverter(options)`](/api-reference/tools/price-converter) - Convert between currencies.
 
+### FAQs
+
+<AccordionGroup>
+  <Accordion title="How do I authenticate with the Go SDK?">
+    Initialize the client with <code>coinpaprika.WithAPIKey("YOUR_API_KEY")</code> to enable Pro features; public endpoints work without a key.
+  </Accordion>
+  <Accordion title="How do I find a coin_id for methods like GetByID or Tickers.GetByCoinID?">
+    Use the [Coverage Checker](/tools/coverage) to look up canonical IDs such as <code>btc-bitcoin</code>.
+  </Accordion>
+  <Accordion title="How to fetch historical OHLCV in Go?">
+    Call <code>Coins.GetHistoricalOHLCVByCoinID</code> with start/end and quote; Pro access is required for history.
+  </Accordion>
+  <Accordion title="How should I handle rate limits?">
+    Inspect errors for HTTP 429 and back off before retrying; consider adding simple retry logic.
+  </Accordion>
+</AccordionGroup>
+
 ## Examples Repository
 
 Check out practical examples in the [official repository](https://github.com/coinpaprika/coinpaprika-api-go-client/tree/main/examples).

@@ -243,3 +243,23 @@ Where:
 For technical support or questions about the Streaming API:
 - Contact: [Fill out the form](https://coinpaprika.com/contact/)
 - Discord: [Join our community](https://discord.gg/DhJge5TUGM) 
+
+### FAQs
+
+<AccordionGroup>
+  <Accordion title="What is a crypto price WebSocket API?">
+    A WebSocket API streams real-time cryptocurrency market data over a persistent connection. Use it when you need low-latency price, volume, or market cap updates.
+  </Accordion>
+  <Accordion title="Do I need an API key for the streaming API?">
+    Yes. Pass your key in the `Authorization` header when establishing the WebSocket connection.
+  </Accordion>
+  <Accordion title="How often are tick updates sent?">
+    Ticks are pushed as markets change. There is no fixed interval; frequency depends on market activity.
+  </Accordion>
+  <Accordion title="Can I subscribe to multiple coins and quotes?">
+    Yes. Provide arrays for `ids` (e.g., `btc-bitcoin`) and `quotes` (e.g., `USD`, `BTC`) in the subscribe payload. To discover IDs quickly, use the [Coverage Checker](/tools/coverage).
+  </Accordion>
+  <Accordion title="What’s the message format for prices and market cap?">
+    Each update includes `quotes.{QUOTE}.p` (price), `quotes.{QUOTE}.v24h` (24h volume), and `quotes.{QUOTE}.m` (market cap), plus a UNIX `ts` timestamp.
+  </Accordion>
+</AccordionGroup>
