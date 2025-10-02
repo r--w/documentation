@@ -4,7 +4,7 @@ sidebarTitle: "Coverage Checker"
 description: "Use this tool to quickly verify whether an asset exists in CoinPaprika's dataset. Enter a contract address, token name, or ticker symbol; we’ll search our coverage and show the closest matches."
 ---
 
-import { useState } from "react"
+import { useState } from "/snippets/react"
 
 import { CoverageChecker } from "/snippets/CoverageChecker.jsx"
 import { CoverageResults } from "/snippets/CoverageResults.jsx"
@@ -17,11 +17,23 @@ export default function CoverageCheckerPage() {
       <CoverageResults externalData={data} />
 
       <h3>FAQs</h3>
-      <p><strong>How do I find a coin ID (e.g., btc-bitcoin)?</strong><br/>Search by token name, ticker, or contract address. Results include canonical CoinPaprika IDs.</p>
-      <p><strong>Can I search by contract address?</strong><br/>Yes. Paste the EVM/Solana/etc. contract address to resolve the asset and its CoinPaprika ID.</p>
-      <p><strong>What if my asset isn’t found?</strong><br/>Try an alternative ticker/name or paste a contract. If still missing, contact support with details.</p>
-      <p><strong>How do I use the ID in the API?</strong><br/>Use it in REST endpoints like <code>/v1/tickers/{coin_id}</code> or in Streaming API subscriptions.</p>
-      <p><strong>Is the checker data live?</strong><br/>It queries our current dataset; availability reflects the latest index.</p>
+      <AccordionGroup>
+        <Accordion title="How do I find a coin ID (e.g., btc-bitcoin)?">
+          Search by token name, ticker, or contract address. Results include canonical CoinPaprika IDs.
+        </Accordion>
+        <Accordion title="Can I search by contract address?">
+          Yes. Paste the EVM/Solana/etc. contract address to resolve the asset and its CoinPaprika ID.
+        </Accordion>
+        <Accordion title="What if my asset isn’t found?">
+          Try an alternative ticker/name or paste a contract. If still missing, contact support with details.
+        </Accordion>
+        <Accordion title="How do I use the ID in the API?">
+          Use it in REST endpoints like <code>/v1/tickers/&#123;coin_id&#125;</code> or in Streaming API subscriptions.
+        </Accordion>
+        <Accordion title="Is the checker data live?">
+          It queries our current dataset; availability reflects the latest index.
+        </Accordion>
+      </AccordionGroup>
     </>
   )
 }

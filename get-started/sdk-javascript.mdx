@@ -265,7 +265,7 @@ This library is available under the MIT license. See the [LICENSE file](https://
     Use the [Coverage Checker](/tools/coverage) to look up canonical IDs such as <code>btc-bitcoin</code>.
   </Accordion>
   <Accordion title="How do I get historical OHLCV data?">
-    Use <code>getCoinsOHLCVHistorical({ coinId, start, end, quote })</code> with an API key.
+        Use <code>getCoinsOHLCVHistorical(&#123; coinId, start, end, quote &#125;)</code> with an API key.
   </Accordion>
   <Accordion title="What’s the recommended error handling pattern?">
     Wrap calls in <code>try/catch</code> (async/await) or chain <code>.catch()</code>, and back off on 429 Too Many Requests.
