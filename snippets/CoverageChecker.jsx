@@ -1,6 +1,6 @@
 "use client"
  
-import { useMemo, useRef, useState } from "react"
+import { useMemo, useRef, useState } from "/snippets/react"
 
 
 export const CoverageChecker = ({ mcpUrl = "https://cpmcp.coinpaprika.workers.dev/json-rpc", onUpdate }) => {

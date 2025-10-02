@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "/snippets/react"
 
 const STORE_LAST = "dp:coverage:last"
 

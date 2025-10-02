@@ -153,7 +153,7 @@ Used to fetch ticker price and market data.
   <Accordion title="How do I request historical OHLCV?">
     Call the historical OHLCV service method with required parameters; Pro access is required for history.
   </Accordion>
-  <Accordion title="What’s the recommended error handling?")>
+  <Accordion title="What’s the recommended error handling?">
     Catch <code>HttpException</code> for non-2xx responses (e.g., 404, 429) and <code>IOException</code> for network failures; apply backoff before retries.
   </Accordion>
 </AccordionGroup>
