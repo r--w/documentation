@@ -972,7 +972,7 @@ paths:
         | Enterprise | No limits |
 
         **Update interval:** 
-        - 3 minutes for Starter, Pro, Business, Enterprise plans
+        - 60 seconds for Starter, Pro, Business, Enterprise plans
         - On average 5 minutes for Free
       x-codeSamples:
         - lang: cURL
@@ -1020,7 +1020,7 @@ paths:
         - Enterprise
 
         **Update interval:** 
-        - 3 minutes for Starter, Pro, Business, Enterprise plans
+        - 60 seconds for Starter, Pro, Business, Enterprise plans
         - On average 5 minutes for Free
       x-codeSamples:
         - lang: cURL
