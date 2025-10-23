@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from "/snippets/react"
 
 
-export const CoverageChecker = ({ mcpUrl = "https://cpmcp.coinpaprika.workers.dev/json-rpc", onUpdate }) => {
+export const CoverageChecker = ({ mcpUrl = "https://mcp.coinpaprika.com/json-rpc", onUpdate }) => {
   // ---- cache + comms (scoped INSIDE the component)
   const STORE_LAST   = "dp:coverage:last"     // { ts, query, results }
   const CACHE_PREFIX = "dp:coverage:query:"   // per-query cache
