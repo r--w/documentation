@@ -872,6 +872,11 @@ paths:
           source: |
             curl --request GET \
             --url 'https://api.coinpaprika.com/v1/tags'
+        - lang: cURL
+          label: CLI - with additional fields
+          source: |
+            curl --request GET \
+            --url 'https://api.coinpaprika.com/v1/tags?additional_fields=coins,icos'
       parameters:
         - $ref: '#/components/parameters/additional_fields'
       responses:
@@ -883,6 +888,53 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/tag'
+              examples:
+                with_additional_fields:
+                  summary: Response with additional_fields=coins,icos parameter
+                  value:
+                    - id: cryptocurrency
+                      name: Cryptocurrency
+                      description: Digital asset designed to work as a medium of exchange that uses cryptography to secure financial transactions, control the creation of additional units, and verify the transfer of assets
+                      type: functional
+                      coin_counter: 1272
+                      ico_counter: 40
+                      coins:
+                        - btc-bitcoin
+                        - eth-ethereum
+                        - xrp-xrp
+                      icos:
+                        - gift-giftcoin
+                        - oxen-oxen
+                        - hyc-hycon
+                    - id: platform
+                      name: Platform
+                      description: A platform is a group of technologies that are used as a base upon which other applications, processes or technologies are developed
+                      type: functional
+                      coin_counter: 367
+                      ico_counter: 265
+                      coins:
+                        - ada-cardano
+                        - avax-avalanche
+                        - sui-sui
+                      icos:
+                        - nct-polyswarm
+                        - fdz-friendz
+                        - iotx-iotex
+                without_additional_fields:
+                  summary: Response without additional_fields parameter
+                  value:
+                    - id: cryptocurrency
+                      name: Cryptocurrency
+                      description: Digital asset designed to work as a medium of exchange that uses cryptography to secure financial transactions, control the creation of additional units, and verify the transfer of assets
+                      type: functional
+                      coin_counter: 1272
+                      ico_counter: 40
+                    - id: platform
+                      name: Platform
+                      description: A platform is a group of technologies that are used as a base upon which other applications, processes or technologies are developed
+                      type: functional
+                      coin_counter: 367
+                      ico_counter: 265
         '429':
           description: too many requests
           content:
@@ -917,6 +969,11 @@ paths:
           label: CLI
           source: |
             curl --request GET \
+            --url 'https://api.coinpaprika.com/v1/tags/blockchain-service?additional_fields=coins,icos'
+        - lang: cURL
+          label: CLI - without additional fields
+          source: |
+            curl --request GET \
             --url 'https://api.coinpaprika.com/v1/tags/blockchain-service'
       parameters:
         - $ref: '#/components/parameters/tag_id'
@@ -928,6 +985,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tag'
+              examples:
+                with_additional_fields:
+                  summary: Response with additional_fields=coins,icos parameter
+                  value:
+                    id: blockchain-service
+                    name: Blockchain Service
+                    coin_counter: 321
+                    ico_counter: 77
+                    description: A solution for companies wanting to build, host and use their own blockchain apps, smart contracts and functions on the blockchain.
+                    type: functional
+                    coins:
+                      - link-chainlink
+                      - atom-cosmos
+                      - theta-theta-token
+                      - ftm-fantom
+                      - trac-origintrail
+                    icos:
+                      - kodakcoin-kodakone
+                      - acad-academy
+                      - card-cardstack
+                without_additional_fields:
+                  summary: Response without additional_fields parameter
+                  value:
+                    id: blockchain-service
+                    name: Blockchain Service
+                    coin_counter: 321
+                    ico_counter: 77
+                    description: A solution for companies wanting to build, host and use their own blockchain apps, smart contracts and functions on the blockchain.
+                    type: functional
         '404':
           description: not found
           content:
