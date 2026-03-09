@@ -2631,6 +2631,23 @@ components:
         name:
           type: string
           example: Binance
+        type:
+          type: array
+          items:
+            type: string
+            enum:
+              - cex
+              - dex
+              - perpetuals
+              - spot
+              - otc
+              - other
+          example:
+            - cex
+            - spot
+          description: >-
+            Exchange type classification. Determined by centralization status
+            (cex, dex, other) and default market category (spot, perpetuals, otc).
         active:
           type: boolean
           example: true
