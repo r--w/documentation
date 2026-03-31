@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "willow",
+  "theme": "maple",
   "name": "Crypto API - Price & Market Data API | CoinPaprika",
   "colors": {
     "primary": "#CA312C",
