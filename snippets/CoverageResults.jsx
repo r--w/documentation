@@ -1,24 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "/snippets/react"
+import { useEffect, useState } from "react"
 
 const STORE_LAST = "dp:coverage:last"
 
 export function CoverageResults({ externalData }) {
   const [results, setResults] = useState(null)
   const [lastQuery, setLastQuery] = useState("")
-  // primary color from docs.json
-  const PRIMARY = "#16A34A"
-
-  // local helpers in component scope
   const fmtNum = (n) =>
     (n === null || n === undefined || Number.isNaN(n))
       ? "—"
       : Number(n).toLocaleString(undefined, { maximumFractionDigits: 6 })
-
-  const trunc = (a = "") => (
-    a && a.length > 20 ? `${a.slice(0, 8)}…${a.slice(-6)}` : a || "—"
-  )
 
   // init from sessionStorage
   useEffect(() => {

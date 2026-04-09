@@ -1,14 +1,12 @@
 "use client"
- 
-import { useMemo, useRef, useState } from "/snippets/react"
 
+import { useState } from "react"
 
-export const CoverageChecker = ({ mcpUrl = "https://mcp.coinpaprika.com/json-rpc", onUpdate }) => {
-  // ---- cache + comms (scoped INSIDE the component)
-  const STORE_LAST   = "dp:coverage:last"     // { ts, query, results }
-  const CACHE_PREFIX = "dp:coverage:query:"   // per-query cache
+export const CoverageChecker = ({ onUpdate }) => {
+  const SEARCH_API   = "https://api.coinpaprika.com/v1/search/"
+  const STORE_LAST   = "dp:coverage:last"
+  const CACHE_PREFIX = "dp:coverage:query:"
   const CACHE_TTL_MS = 5 * 60 * 1000          // 5 minutes
-  const EVT_NAME     = "dp:coverage:update"
   const PRIMARY      = "#CA312C"              // matches docs.json colors.primary
   const SEARCH_LIMIT = 25
 
@@ -29,58 +27,12 @@ export const CoverageChecker = ({ mcpUrl = "https://mcp.coinpaprika.com/json-rpc
     try { sessionStorage.setItem(STORE_LAST, JSON.stringify({ ts: Date.now(), query, results })) } catch {}
   }
 
-  // ---- normal state
   const [query, setQuery] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  const initOnce = useRef(null)
 
-  const HEADERS = useMemo(() => ({ "Content-Type": "application/json" }), [])
-
-  // optional handshake
-  async function initializeIfNeeded() {
-    if (!initOnce.current) {
-      initOnce.current = fetch(mcpUrl, {
-        method: "POST",
-        headers: HEADERS,
-        body: JSON.stringify({ jsonrpc: "2.0", id: "init", method: "initialize", params: {} }),
-        mode: "cors",
-      }).catch(() => null)
-    }
-    return initOnce.current
-  }
-
-  async function rpc(method, params, id = Date.now()) {
-    await initializeIfNeeded()
-    const res = await fetch(mcpUrl, {
-      method: "POST",
-      headers: HEADERS,
-      body: JSON.stringify({ jsonrpc: "2.0", id, method, params }),
-      mode: "cors",
-    })
-    const text = await res.text()
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    let json; try { json = JSON.parse(text) } catch { throw new Error("Invalid JSON-RPC response") }
-    if (json?.error) throw new Error(json.error.message || "RPC error")
-    return json
-  }
-
-  function parseToolsCall(rpcRes) {
-    const c = rpcRes?.result?.content
-    if (Array.isArray(c) && c[0]?.type === "text") {
-      try { return JSON.parse(c[0].text) } catch {}
-    }
-    return null
-  }
-
-  // publish to all paths (store + DOM events)
   function publish(query, results) {
-    // debug
-    console.debug("[CoverageChecker] publish", { query, results })
-
     saveLast(query, results)
-
-    // direct prop callback for colocated usage
     try {
       if (typeof onUpdate === "function") onUpdate({ query, results })
     } catch {}
@@ -92,9 +44,10 @@ export const CoverageChecker = ({ mcpUrl = "https://mcp.coinpaprika.com/json-rpc
       const cached = loadCache(q)
       if (cached) { publish(q, cached); return }
 
-      const rpcRes = await rpc("tools/call", { name: "search", arguments: { q, limit: SEARCH_LIMIT } })
-      const payload = parseToolsCall(rpcRes) || {}
-      // payload should be an object like { currencies: [], exchanges: [], icos: [], people: [], tags: [] }
+      const url = `${SEARCH_API}?q=${encodeURIComponent(q)}&limit=${SEARCH_LIMIT}`
+      const res = await fetch(url, { mode: "cors" })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const payload = await res.json()
       const results = {
         currencies: Array.isArray(payload.currencies) ? payload.currencies : [],
         exchanges: Array.isArray(payload.exchanges) ? payload.exchanges : [],
