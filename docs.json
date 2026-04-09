@@ -43,17 +43,15 @@
           "tab": "Guides",
           "groups": [
             {
-              "group": "Tools",
+              "group": "AI & Tools",
               "pages": [
-                "tools/coverage"
-              ]
-            },
-            {
-              "group": "Model Context Protocol (MCP)",
-              "pages": [
+                "cli",
+                "claude-code-plugin",
+                "skills",
                 "mcp-introduction",
                 "mcp-connect-claude-cursor",
-                "mcp-json-rpc-usage"
+                "mcp-json-rpc-usage",
+                "tools/coverage"
               ]
             },
             {

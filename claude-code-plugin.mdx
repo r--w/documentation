@@ -1,0 +1,295 @@
+---
+title: "CoinPaprika Claude Code plugin"
+sidebarTitle: "Claude Code Plugin"
+description: "Install the CoinPaprika Claude Code plugin with two commands. Access real-time crypto prices, market data, and exchange information directly in Claude Code."
+---
+
+## What is the CoinPaprika Claude Code plugin?
+
+The CoinPaprika plugin is a native Claude Code plugin that gives you instant access to real-time cryptocurrency market data -- prices, volumes, market caps, exchange data, historical OHLCV, and more -- covering 12,000+ coins and 350+ exchanges.
+
+<Info>
+  Two commands. Zero configuration. The plugin bundles a built-in MCP server, so no separate MCP setup is needed.
+</Info>
+
+<Frame>
+  <img src="/images/tutorials/plugin/terminal.png" alt="Claude Code terminal showing CoinPaprika plugin with available crypto data tools listed" />
+</Frame>
+
+---
+
+## Install
+
+<Steps>
+<Step title="Add the CoinPaprika marketplace">
+
+```bash
+/plugin marketplace add coinpaprika/claude-marketplace
+```
+
+This registers the CoinPaprika marketplace where the plugin is hosted.
+</Step>
+
+<Step title="Install the CoinPaprika plugin">
+
+```bash
+/plugin install coinpaprika
+```
+
+Select **"Install now"** when prompted.
+
+<Frame>
+  <img src="/images/tutorials/plugin/plugininstall.png" alt="Terminal output showing /plugin install coinpaprika completing successfully in Claude Code" />
+</Frame>
+</Step>
+
+<Step title="Start querying">
+
+That's it. No config files, no environment setup, no API keys needed for the free tier. Ask Claude about crypto data and it uses the plugin automatically.
+
+<Frame>
+  <img src="/images/tutorials/plugin/answer.png" alt="Claude Code answering What is the price of Bitcoin using the CoinPaprika plugin, showing live price data" />
+</Frame>
+</Step>
+</Steps>
+
+---
+
+## What you get
+
+The CoinPaprika plugin includes:
+
+| Component | What it does |
+|---|---|
+| **29 MCP tools** | Live data access: tickers, coins, exchanges, OHLCV, contracts, tags, search, conversion |
+| **@crypto-analyst agent** | Specialized agent for market analysis and portfolio queries |
+| **Agent skills** | API reference files that give Claude deeper knowledge of CoinPaprika endpoints |
+
+---
+
+## Example queries
+
+Once installed, ask Claude about crypto data naturally:
+
+### Prices and tickers
+
+```
+What's the current price of Bitcoin and Ethereum?
+```
+
+```
+Show me the top 10 coins by market cap with their 24h price change
+```
+
+### Exchange data
+
+```
+Which exchanges list Solana? Sort by volume.
+```
+
+```
+What are the trading pairs available for ETH on Binance?
+```
+
+### Historical data
+
+```
+Get Bitcoin's OHLCV data for the last 30 days
+```
+
+```
+How has Ethereum's price changed over the past year?
+```
+
+### Search and discovery
+
+```
+Search for DeFi tokens
+```
+
+```
+What coins are tagged as stablecoins?
+```
+
+### Using the @crypto-analyst agent
+
+```
+@crypto-analyst Analyze the current state of the top 5 cryptocurrencies
+```
+
+```
+@crypto-analyst Compare Bitcoin and Ethereum market performance this month
+```
+
+---
+
+## Manage the plugin
+
+### View installed plugins
+
+```
+/plugin
+```
+
+Select "Manage Plugins" to see all installed plugins and their status.
+
+### Enable/disable
+
+```bash
+# Disable (keeps installed, reduces context usage)
+/plugin disable coinpaprika@coinpaprika
+
+# Re-enable
+/plugin enable coinpaprika@coinpaprika
+```
+
+### Update
+
+```bash
+/plugin marketplace update coinpaprika/claude-marketplace
+```
+
+### Uninstall
+
+```bash
+/plugin uninstall coinpaprika@coinpaprika
+```
+
+---
+
+## Plugin vs MCP server vs skills
+
+| | Claude Code Plugin | Hosted MCP Server | Agent Skills |
+|---|---|---|---|
+| **Install** | `/plugin install` | Add URL to config | `npx skills add` |
+| **What you get** | MCP tools + agent + skills (all bundled) | 29 MCP tools | API knowledge (endpoints, CLI, workflows) |
+| **Works with** | Claude Code only | Claude Desktop, Cursor, VS Code | Claude Code, Cursor, Cline, and more |
+| **Best for** | Claude Code users who want everything in one install | Other AI IDEs | Any agent that makes HTTP calls directly |
+
+<Tip>
+  If you use Claude Code, the plugin is the easiest path -- it bundles everything. For Claude Desktop or Cursor, use the [hosted MCP server](/mcp-connect-claude-cursor) instead.
+</Tip>
+
+---
+
+## Integration with DexPaprika
+
+The same marketplace also hosts the **DexPaprika plugin** for on-chain DEX data. Install both for complete crypto coverage:
+
+```bash
+/plugin install coinpaprika
+/plugin install dexpaprika
+```
+
+- **CoinPaprika** -- CEX data: 12,000+ coins, 350+ exchanges, market caps, OHLCV
+- **DexPaprika** -- DEX data: 34 blockchains, 30M+ pools, on-chain token prices, streaming
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+<Accordion title="Plugin not showing up after install">
+1. Run `/plugin marketplace update coinpaprika/claude-marketplace`
+2. Restart Claude Code
+3. Run `/plugin install coinpaprika` again
+</Accordion>
+
+<Accordion title="Claude not using the plugin">
+Be specific: "Using CoinPaprika, show me..." or phrase questions about coins, prices, and exchanges. Claude automatically recognizes plugin-relevant queries, but explicit mentions help.
+</Accordion>
+
+<Accordion title="/plugin commands not recognized">
+Make sure you're running commands inside Claude Code (not a regular terminal). Check that you're using the correct syntax: `/plugin install coinpaprika`.
+</Accordion>
+
+<Accordion title="No data returned">
+Check that the coin ID format is correct (`btc-bitcoin`, not `bitcoin` or `BTC`). Use "search for [coin name]" to find the right ID. For free tier limitations (2,000 assets), some smaller coins may not be available.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## What's next?
+
+<CardGroup cols={2}>
+  <Card
+    title="MCP Server"
+    icon="plug"
+    href="/mcp-introduction"
+  >
+    Connect Claude Desktop or Cursor to CoinPaprika data
+  </Card>
+  <Card
+    title="Agent Skills"
+    icon="graduation-cap"
+    href="/skills"
+  >
+    Install CoinPaprika skills for any AI agent
+  </Card>
+  <Card
+    title="REST API Reference"
+    icon="bolt"
+    href="/api-reference/rest-api/introduction"
+  >
+    Complete endpoint documentation with interactive playground
+  </Card>
+  <Card
+    title="CLI"
+    icon="terminal"
+    href="/cli"
+  >
+    Query crypto data from the terminal
+  </Card>
+</CardGroup>
+
+---
+
+## Need help?
+
+<CardGroup cols={2}>
+  <Card
+    title="Join Our Discord"
+    icon="discord"
+    href="https://discord.gg/DhJge5TUGM"
+  >
+    Connect with our community for real-time support and discussions
+  </Card>
+  <Card
+    title="Direct Support"
+    icon="envelope"
+    href="mailto:support@coinpaprika.com"
+  >
+    Contact our team for technical assistance and custom integrations
+  </Card>
+</CardGroup>
+
+### FAQs
+
+<AccordionGroup>
+  <Accordion title="Do I need an API key?">
+    Not for the free tier. The plugin uses the free CoinPaprika API (20,000 calls/month, 2,000 assets) by default. No key, no registration.
+  </Accordion>
+  <Accordion title="Does the plugin work in Cursor or Claude Desktop?">
+    The plugin is Claude Code only. For Cursor or Claude Desktop, use the [hosted MCP server](/mcp-connect-claude-cursor) instead -- same data, different integration method.
+  </Accordion>
+  <Accordion title="What's the difference between the plugin and the MCP server?">
+    The plugin bundles the MCP server plus extras (agents, skills). If you use Claude Code, the plugin is the easiest path. The standalone MCP server works with more tools (Claude Desktop, Cursor, VS Code).
+  </Accordion>
+  <Accordion title="Can I use CoinPaprika and DexPaprika plugins together?">
+    Yes. Install both from the same marketplace. CoinPaprika covers centralized exchange data; DexPaprika covers on-chain DEX data.
+  </Accordion>
+</AccordionGroup>
+
+<script type="application/ld+json">
+  {JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type": "Question","name": "Do I need an API key for the CoinPaprika Claude Code plugin?","acceptedAnswer": {"@type": "Answer","text": "Not for the free tier. 20,000 calls/month, 2,000 assets, no key needed."}},
+      {"@type": "Question","name": "Does the CoinPaprika plugin work in Cursor or Claude Desktop?","acceptedAnswer": {"@type": "Answer","text": "The plugin is Claude Code only. For Cursor or Claude Desktop, use the hosted MCP server instead."}},
+      {"@type": "Question","name": "What is the difference between the CoinPaprika plugin and MCP server?","acceptedAnswer": {"@type": "Answer","text": "The plugin bundles MCP server plus agents and skills. The standalone MCP server works with more tools like Claude Desktop, Cursor, and VS Code."}},
+      {"@type": "Question","name": "Can I use CoinPaprika and DexPaprika plugins together?","acceptedAnswer": {"@type": "Answer","text": "Yes. Both install from the same marketplace. CoinPaprika covers CEX data, DexPaprika covers on-chain DEX data."}}
+    ]
+  })}
+</script>
