@@ -84,10 +84,6 @@ const keyInfo = await client.getKeyInfo();
 console.log(keyInfo); // { plan, plan_status, usage: { current_month: { ... } } }
 ```
 
-<Warning>
-  **No `Bearer` prefix.** The SDK sends the key as the bare `Authorization` header value. Adding `Bearer ` to the key manually will be rejected by our edge with HTTP 403.
-</Warning>
-
 <Tip>
   Use `/key/info` from your monitoring stack to self-throttle. It returns your plan, status, requests made this month, and requests remaining. Hit it once a day and alert at 80%.
 </Tip>
