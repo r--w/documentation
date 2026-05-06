@@ -66,6 +66,30 @@ async function getMarketData() {
 getMarketData();
 ```
 
+## Authenticating with a paid plan
+
+If you have a paid plan (Starter, Pro, Business, Ultimate), pass your API key when constructing the client. The SDK switches to `https://api-pro.coinpaprika.com` automatically when `pro: true` is set.
+
+```javascript
+const CoinpaprikaAPI = require('@coinpaprika/api-nodejs-client');
+
+// Paid plan: pass apiKey + pro:true
+const client = new CoinpaprikaAPI({
+  apiKey: process.env.COINPAPRIKA_API_KEY,
+  pro: true
+});
+
+// Now all calls go through api-pro and include the auth header.
+const keyInfo = await client.getKeyInfo();
+console.log(keyInfo); // { plan, plan_status, usage: { current_month: { ... } } }
+```
+
+<Tip>
+  Use `/key/info` from your monitoring stack to self-throttle. It returns your plan, status, requests made this month, and requests remaining. Hit it once a day and alert at 80%.
+</Tip>
+
+Requires `@coinpaprika/api-nodejs-client@3.0.0` or newer. Earlier versions do not support the `apiKey` option.
+
 ## Common Use Cases
 
 ### Getting Coin Information
