@@ -48,24 +48,43 @@ Coinpaprika.API.global().perform { result in
 }
 ```
 
-## Using the Pro API
+## Authenticating with a paid plan
 
-To use the Pro API, you must manually change the base URL in the `Configuration` object before making any requests. This should be done once when your app launches.
+Paid plans (Starter / Pro / Business / Ultimate / Enterprise) live on a separate hostname, `https://api-pro.coinpaprika.com/v1/`, and require an API key in the `Authorization` header. Send the bare key — a `Bearer ` prefix is rejected by the WAF.
+
+The high-level `Coinpaprika.API` static methods don't currently accept a key. To call paid endpoints, drop down to the `CoinpaprikaNetworking` `Request<Model>` constructor with `.bearer(token:)` and point it at the Pro base URL. The package exposes `CoinpaprikaNetworking` as a separate library product, so add it to your target's dependencies alongside `Coinpaprika`.
 
 ```swift
-import Coinpaprika
+import CoinpaprikaNetworking
+import Foundation
 
-// Set the base URL to the Pro endpoint
-Coinpaprika.Configuration.baseUrl = URL(string: "https://api-pro.coinpaprika.com/v1/")!
+struct KeyInfo: Codable {
+    let plan: String
+    let plan_status: String
+}
 
-// Now all subsequent requests will use the Pro API
-Coinpaprika.API.tickers().perform { result in
-    // Pro plan provides access to all tickers
-    if case .success(let tickers) = result {
-        print("Successfully fetched \(tickers.count) tickers using the Pro API.")
+let key = ProcessInfo.processInfo.environment["COINPAPRIKA_API_KEY"]!
+
+let request = Request<KeyInfo>(
+    baseUrl: URL(string: "https://api-pro.coinpaprika.com/v1/")!,
+    method: .get,
+    path: "key/info",
+    params: nil,
+    userAgent: "my-app/1.0",
+    authorisation: .bearer(token: key)
+)
+
+request.perform { result in
+    switch result {
+    case .success(let info):
+        print("Plan: \(info.plan), status: \(info.plan_status)")
+    case .failure(let error):
+        print("Error: \(error)")
     }
 }
 ```
+
+For free-tier endpoints that don't need a key (most of `Coinpaprika.API`), keep using the high-level static API against the default base URL.
 
 ## Common Use Cases
 
@@ -116,28 +135,39 @@ Coinpaprika.API.coin(id: "eth-ethereum").perform { response in
 
 ### Historical Ticker Data
 
-Note: Accessing historical data requires using the Pro API.
+Historical endpoints require a paid plan. The high-level `Coinpaprika.API.historicalTicks(...)` shape is shown below for the request structure; to actually authenticate, build a `Request<Tick>` against the Pro base URL using the `.bearer(token:)` pattern from "Authenticating with a paid plan".
 
 ```swift
-import Coinpaprika
+import CoinpaprikaNetworking
+import Foundation
 
-// Ensure Pro API is configured
-Coinpaprika.Configuration.baseUrl = URL(string: "https://api-pro.coinpaprika.com/v1/")!
+struct Tick: Codable {
+    let timestamp: String
+    let price: Double
+    let volume24h: Double
+    enum CodingKeys: String, CodingKey {
+        case timestamp, price
+        case volume24h = "volume_24h"
+    }
+}
 
+let key = ProcessInfo.processInfo.environment["COINPAPRIKA_API_KEY"]!
 let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
+let isoStart = ISO8601DateFormatter().string(from: sevenDaysAgo)
 
-Coinpaprika.API.historicalTicks(
-    id: "btc-bitcoin",
-    start: sevenDaysAgo,
-    limit: 100,
-    quote: .usd
-).perform { response in
-    switch response {
+let request = Request<[Tick]>(
+    baseUrl: URL(string: "https://api-pro.coinpaprika.com/v1/")!,
+    method: .get,
+    path: "tickers/btc-bitcoin/historical",
+    params: ["start": isoStart, "limit": 100, "quote": "usd"],
+    userAgent: "my-app/1.0",
+    authorisation: .bearer(token: key)
+)
+
+request.perform { result in
+    switch result {
     case .success(let ticks):
-        print("Recent Historical Ticks for Bitcoin:")
-        ticks.forEach { tick in
-            print("[\(tick.timestamp)] Price: $\(tick.price), Volume: \(tick.volume24h)")
-        }
+        ticks.forEach { print("[\($0.timestamp)] $\($0.price)") }
     case .failure(let error):
         print("Error fetching historical ticks: \(error)")
     }
@@ -246,13 +276,13 @@ func getMarketData() async {
 
 <AccordionGroup>
   <Accordion title="How do I use the Pro API in Swift?">
-    Set <code>Coinpaprika.Configuration.baseUrl</code> to the Pro endpoint once at app startup; authenticate at the edge as needed.
+    The high-level <code>Coinpaprika.API</code> static methods don't currently accept a key. Use <code>CoinpaprikaNetworking</code>'s <code>Request&lt;Model&gt;</code> constructor with <code>.bearer(token:)</code> and the <code>https://api-pro.coinpaprika.com/v1/</code> base URL. See the "Authenticating with a paid plan" section above.
   </Accordion>
   <Accordion title="Where can I find coin IDs for methods like ticker(id:)?">
     Use the [Coverage Checker](/tools/coverage) to obtain canonical IDs (e.g., <code>btc-bitcoin</code>).
   </Accordion>
   <Accordion title="How do I fetch historical ticks/ohlcv?">
-    Configure the Pro base URL and call the relevant historical APIs with <code>start</code>/<code>end</code> and <code>quote</code>.
+    Historical endpoints require a paid plan. Build a <code>Request&lt;Model&gt;</code> against the Pro base URL with <code>.bearer(token:)</code> auth (see the "Authenticating with a paid plan" section), pointing at <code>tickers/{coinId}/historical</code> or <code>coins/{coinId}/ohlcv/historical</code> with <code>start</code>/<code>end</code>/<code>quote</code> parameters.
   </Accordion>
   <Accordion title="What is the recommended error handling?">
     Inspect the failure case of <code>Result</code> and map to app errors; for 429 responses, back off and retry.
