@@ -41,7 +41,7 @@ Finally, ensure you have the `INTERNET` permission in your `AndroidManifest.xml`
 First, configure and build a `Retrofit` instance. You must provide the base URL and a converter factory.
 
 ```kotlin
-import com.coinpaprika.apiclient.BaseUrl
+import com.coinpaprika.apiclient.COINPAPRIKA_BASE_URL
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
@@ -53,7 +53,7 @@ object RetrofitClient {
         .build()
 
     val instance: Retrofit = Retrofit.Builder()
-        .baseUrl(BaseUrl.API_ENDPOINT)
+        .baseUrl(COINPAPRIKA_BASE_URL)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
 }
@@ -97,6 +97,47 @@ fun fetchTickers() {
     }
 }
 ```
+
+## Authenticating with a paid plan
+
+Paid plans (Starter / Pro / Business / Ultimate / Enterprise) live on a separate hostname, `https://api-pro.coinpaprika.com/v1/`, and require an API key in the `Authorization` header. The library doesn't provide a Pro-aware base URL constant; configure it on your `Retrofit` builder along with an OkHttp `Interceptor` that injects the key on every request.
+
+```kotlin
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
+
+object ProRetrofitClient {
+    // CoinPaprika expects the bare API key — no `Bearer ` prefix.
+    private val authInterceptor = Interceptor { chain ->
+        val key = System.getenv("COINPAPRIKA_API_KEY")
+            ?: error("COINPAPRIKA_API_KEY is not set")
+        val request = chain.request().newBuilder()
+            .addHeader("Authorization", key)
+            .build()
+        chain.proceed(request)
+    }
+
+    private val httpClient = OkHttpClient.Builder()
+        .addInterceptor(authInterceptor)
+        .build()
+
+    private val moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
+
+    val instance: Retrofit = Retrofit.Builder()
+        .baseUrl("https://api-pro.coinpaprika.com/v1/")
+        .client(httpClient)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .build()
+}
+```
+
+Free-tier callers don't need any of this — keep the `RetrofitClient` from Quick Start pointed at `COINPAPRIKA_BASE_URL` without an interceptor.
 
 ## Available Services
 
@@ -145,13 +186,13 @@ Used to fetch ticker price and market data.
 
 <AccordionGroup>
   <Accordion title="How do I authenticate with Retrofit?">
-    Add an <code>Interceptor</code> to your OkHttp client to inject the API key header when using Pro endpoints.
+    Add an OkHttp <code>Interceptor</code> that adds the <code>Authorization</code> header (bare key, no <code>Bearer</code> prefix) and point your <code>Retrofit</code> builder at <code>https://api-pro.coinpaprika.com/v1/</code>. See the "Authenticating with a paid plan" section above.
   </Accordion>
   <Accordion title="Where do I find coin IDs for service methods?">
     Use the [Coverage Checker](/tools/coverage) to discover canonical IDs (e.g., <code>btc-bitcoin</code>).
   </Accordion>
   <Accordion title="How do I request historical OHLCV?">
-    Call the historical OHLCV service method with required parameters; Pro access is required for history.
+    Historical OHLCV requires a paid plan. Use the <code>ProRetrofitClient</code> from the Pro authentication section, then call <code>CoinsService.getHistoricalCoinOHLCV(...)</code> with <code>start</code>/<code>end</code> in ISO date format and a <code>quote</code> like <code>"usd"</code>.
   </Accordion>
   <Accordion title="What’s the recommended error handling?">
     Catch <code>HttpException</code> for non-2xx responses (e.g., 404, 429) and <code>IOException</code> for network failures; apply backoff before retries.
