@@ -1,15 +1,15 @@
 ---
 title: "Rust SDK"
-description: "Official CoinPaprika API Rust client library"
+description: "Community-maintained CoinPaprika API Rust client library"
 keywords: ["crypto api rust", "coinpaprika rust sdk", "rust crypto data"]
 ---
 
 # CoinPaprika Rust SDK
 
-The official Rust client library for the CoinPaprika API provides convenient access to cryptocurrency market data.
+A community-maintained Rust client library for the CoinPaprika API provides convenient access to cryptocurrency market data.
 
 <Note>
-This SDK was built by the courtesy of [Tokenomia Pro](https://tokenomia.pro).
+This is a community client built by [Tokenomia Pro](https://tokenomia.pro), not maintained by CoinPaprika. The [`coinpaprika_api`](https://docs.rs/coinpaprika-api) crate is published independently, so CoinPaprika support does not cover it. For officially maintained clients, see the Python, PHP, or Go SDKs.
 </Note>
 
 ## Installation
@@ -130,7 +130,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 ### Coins
 - [List coins](/api-reference/coins/list-coins)
 - [Get coin by ID](/api-reference/coins/get-coin-by-id)
-- [Get Twitter timeline tweets for a coin](/api-reference/coins/get-twitter-timeline-tweets-for-a-coin)
+- [Get Twitter timeline tweets for a coin](/api-reference/coins/get-twitter-timeline-tweets-for-a-coin-deprecated)
 - [Get coin events by coin ID](/api-reference/coins/get-coin-events-by-coin-id)
 - [Get exchanges by coin ID](/api-reference/coins/get-exchanges-by-coin-id)
 - [Get markets by coin ID](/api-reference/coins/get-markets-by-coin-id)
