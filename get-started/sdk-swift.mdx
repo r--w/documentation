@@ -49,7 +49,7 @@ Coinpaprika.API.global().perform { result in
 
 ## Authenticating with a paid plan
 
-Paid plans (Starter / Pro / Business / Ultimate / Enterprise) live on a separate hostname, `https://api-pro.coinpaprika.com/v1/`, and require an API key in the `Authorization` header. Send the bare key — a `Bearer ` prefix is rejected by the WAF.
+Paid plans (Starter / Pro / Business / Ultimate / Enterprise) live on a separate hostname, `https://api-pro.coinpaprika.com/v1/`, and require an API key in the `Authorization` header. Send the bare key, because a `Bearer ` prefix is rejected by the WAF.
 
 The high-level `Coinpaprika.API` static methods don't currently accept a key. To call paid endpoints, drop down to the `CoinpaprikaNetworking` `Request<Model>` constructor with `.bearer(token:)` and point it at the Pro base URL. The package exposes `CoinpaprikaNetworking` as a separate library product, so add it to your target's dependencies alongside `Coinpaprika`.
 

@@ -22,6 +22,12 @@ All requests require authentication using your API key. You must include it in t
 
 To get your API key, visit the [CoinPaprika API](https://coinpaprika.com/api/) page.
 
+<Note>
+  WebSocket streaming is part of the Enterprise plan. Keys issued on the Free, Starter, Pro,
+  Business and Ultimate plans do not open a streaming connection. See [API Plans](/api-plans)
+  for the full comparison, or [contact us](https://coinpaprika.com/contact/) about Enterprise.
+</Note>
+
 ### 3. Finding IDs
 *   **Currency IDs (`ids`)**: To subscribe to a currency, you need its unique ID (e.g., `"btc-bitcoin"`). You can find these IDs by using the [Coins endpoint](https://docs.coinpaprika.com/api-reference/coins/get-coin-by-id) from our REST API.
 *   **Quote Currencies (`quotes`)**: You can receive prices quoted in various currencies. The currently supported quote currencies are: `USD`, `BTC`, `ETH`, `BNB`, `MATIC`, `SOL`.
