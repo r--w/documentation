@@ -245,7 +245,9 @@ Check the coin ID format. Use `coinpaprika-cli search <name>` to find the correc
 </Accordion>
 
 <Accordion title="OHLCV or historical data returns an error">
-Historical endpoints (OHLCV, ticker history, contract history) require a Starter plan ($99/mo) or above. Run `coinpaprika-cli plans` to see what's available on the free tier.
+Ticker history and contract history work without a key. `/v1/tickers/{coin_id}/historical` returns a rolling year of daily ticks on the free tier, and `/v1/contracts/{platform}/{address}/historical` redirects to the same data. Ask for an earlier `start` and you get HTTP 402 naming the cutoff.
+
+OHLCV is the one that is gated. `/v1/coins/{coin_id}/ohlcv/latest` works without a key, but `/v1/coins/{coin_id}/ohlcv/historical` returns HTTP 402 for anything before the last full day, so a real OHLCV backfill needs a Starter plan ($99/mo) or above. Run `coinpaprika-cli plans` to see what's available on the free tier.
 </Accordion>
 </AccordionGroup>
 
