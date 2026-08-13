@@ -124,6 +124,11 @@ info:
     [/contracts/{platform_id}/{contract_address}](#operation/getTicker)
 servers:
   - url: https://api.coinpaprika.com/v1
+    description: Free plan. No API key required.
+  - url: https://api-pro.coinpaprika.com/v1
+    description: >-
+      Paid plans. Required for every endpoint marked as paid. Send the API key as
+      the entire Authorization header value, with no Bearer prefix.
 tags:
   - name: Key
     description: API key related operations

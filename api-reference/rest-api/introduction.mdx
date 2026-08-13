@@ -69,6 +69,13 @@ curl -H "Authorization: YOUR_API_KEY" "https://api-pro.coinpaprika.com/v1/key/in
 A successful response returns JSON with your plan, status, and remaining monthly quota.
 
 <Warning>
+  The key is the entire header value. There is no `Bearer` prefix, and no other
+  scheme word: `Authorization: Bearer YOUR_API_KEY` does not reach the API. Most
+  APIs expect the opposite, so if your HTTP client has a "bearer token" field,
+  set a raw header instead.
+</Warning>
+
+<Warning>
   The URL for the paid plans is different from the free plan. Check out our [pricing page](/api-plans) for specific details.
 </Warning>
 
