@@ -174,7 +174,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     Use the [Coverage Checker](/tools/coverage) to resolve canonical IDs such as <code>btc-bitcoin</code>.
   </Accordion>
   <Accordion title="Can I get historical data in Rust?">
-    Yes—use the REST historical endpoints via the client methods that accept <code>start</code>/<code>end</code> parameters; an API key is required.
+    Yes. Use the REST historical endpoints via the client methods that accept <code>start</code>/<code>end</code> parameters. The free tier reaches back one year of daily ticks; an API key is required for anything deeper and for OHLCV history beyond the last full day.
   </Accordion>
   <Accordion title="What’s the error handling approach?">
     Propagate <code>Result</code> and map HTTP errors (e.g., 429) to retry/backoff logic in your async runtime.

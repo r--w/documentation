@@ -14,8 +14,8 @@ The documentation is built with Mintlify and consists of:
 
 The technical API references are rendered directly from their specification files. Unlike other setups, there is no scraping or code generation step required to update the documentation for the REST or Streaming APIs.
 
-- **To update the REST API:** Modify the content of `documentation/api-reference/rest-api/openapi.yml`.
-- **To update the Streaming API:** Modify the content of `documentation/api-reference/streaming-api/asyncapi.yml`.
+- **To update the REST API:** Modify the content of `api-reference/rest-api/openapi.yml`.
+- **To update the Streaming API:** Modify the content of `api-reference/streaming-api/asyncapi.yml`.
 
 Mintlify will automatically reflect the changes in the documentation when you run the local development server or when the site is deployed.
 
@@ -25,9 +25,8 @@ To preview your changes on your local machine before publishing:
 
 1.  **Clone the repository**:
     ```bash
-    # Replace with the correct repository URL
-    git clone https://github.com/coinpaprika/coinpaprika-api-docs
-    cd coinpaprika-api-docs/documentation
+    git clone https://github.com/r--w/documentation
+    cd documentation
     ```
 2.  **Install Mintlify CLI** (this only needs to be done once):
     ```bash
@@ -54,8 +53,8 @@ To preview your changes on your local machine before publishing:
 
 - **To update API docs:** Simply edit the corresponding `openapi.yml` or `asyncapi.yml` file. No scraping command is needed.
 - **To add guides or pages:** Create a new `.mdx` file and add it to the navigation structure in `docs.json`.
-- **To test changes:** Run `mintlify dev` from within the `documentation` directory.
+- **To test changes:** Run `mintlify dev` from the repository root.
 - **`docs.json` is the master file:** It controls navigation, appearance, and site-wide settings.
 - For more information on Mintlify features and components, visit the official [Mintlify Documentation](https://mintlify.com/docs/getting-started).
 
-If you have any questions, please reach out to the team. 🚀  
+If you have any questions, please reach out to the team.

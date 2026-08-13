@@ -110,7 +110,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 object ProRetrofitClient {
-    // CoinPaprika expects the bare API key — no `Bearer ` prefix.
+    // CoinPaprika expects the bare API key, with no `Bearer ` prefix.
     private val authInterceptor = Interceptor { chain ->
         val key = System.getenv("COINPAPRIKA_API_KEY")
             ?: error("COINPAPRIKA_API_KEY is not set")
@@ -136,7 +136,7 @@ object ProRetrofitClient {
 }
 ```
 
-Free-tier callers don't need any of this — keep the `RetrofitClient` from Quick Start pointed at `COINPAPRIKA_BASE_URL` without an interceptor.
+Free-tier callers don't need any of this. Keep the `RetrofitClient` from Quick Start pointed at `COINPAPRIKA_BASE_URL` without an interceptor.
 
 ## Available Services
 

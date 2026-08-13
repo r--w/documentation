@@ -118,6 +118,23 @@ All tools follow this structure:
 | getTickerByContract | Ticker by contract address | **platformId**: string; **contractAddress**: string | `{"platformId": "eth-ethereum", "contractAddress": "0x..."}` |
 | priceConverter | Convert base to quote | **baseCurrencyId**: string; **quoteCurrencyId**: string; amount: number (0) | `{"baseCurrencyId": "btc-bitcoin", "quoteCurrencyId": "usd", "amount": 1}` |
 | search | Search currencies, exchanges, icos, people, tags | **q**: string; categories: string; modifier: string; limit: number (50) | `{"q": "btc", "categories": "currencies,exchanges", "modifier": "symbol", "limit": 5}` |
+| status | API health check | none | `{}` |
+| getCapabilities | Agent onboarding notes for this server | none | `{}` |
+| resolveId | Resolve a name or symbol to a canonical ID | **type**: string; **query**: string; limit: number | `{"type": "coin", "query": "bitcoin", "limit": 5}` |
+| getCoinOHLCVLatest | OHLCV for the last full day | **coinId**: string; quote: string | `{"coinId": "btc-bitcoin", "quote": "usd"}` |
+| getCoinOHLCVToday | OHLCV for the current day | **coinId**: string; quote: string | `{"coinId": "btc-bitcoin", "quote": "usd"}` |
+| getCoinOHLCVHistorical | Historical OHLCV | **coinId**: string; **start**: string; end: string; limit: number; interval: string; quote: string | `{"coinId": "btc-bitcoin", "start": "2026-07-01", "interval": "24h"}` |
+| getTickersHistoricalById | Historical ticks for a coin | **coinId**: string; **start**: string; end: string; limit: number; quote: string; interval: string | `{"coinId": "btc-bitcoin", "start": "2026-07-01", "interval": "1d"}` |
+| getHistoricalTickerByContract | Historical ticks by contract address | **platformId**: string; **contractAddress**: string; **start**: string; end: string; limit: number; quote: string; interval: string | `{"platformId": "eth-ethereum", "contractAddress": "0x...", "start": "2026-07-01"}` |
+| keyInfo | API key plan and monthly usage | none | `{}` |
+| getMappings | Map other providers' IDs to CoinPaprika IDs | coinpaprika: string; coinmarketcap: string; coingecko: string; cryptocompare: string; isin: string; dti: string | `{"coingecko": "bitcoin"}` |
+| getChangelogIDs | Coin ID changes made by moderators | page: number; limit: number | `{"page": 1, "limit": 50}` |
+| submitFeedback | Report a gap or problem with this server | **goal**: string; attempted_tools: string; blocked_at: string; expected: string; observed: string; severity: string | `{"goal": "Fetch hourly OHLCV", "observed": "402 returned"}` |
+
+<Note>
+  This table is the full set of 31 tools the server exposes. To confirm it against the running
+  server at any time, call `tools/list` as shown above.
+</Note>
 
 ### Call Pattern Template
 
