@@ -119,6 +119,10 @@
           "pages": [
             "changelog"
           ]
+        },
+        {
+          "tab": "Status",
+          "href": "https://status.coinpaprika.com/"
         }
     ],
     "global": {
