@@ -28,6 +28,11 @@ keywords: ["crypto api faq", "coinpaprika api", "crypto api help"]
     
     For more, please visit our full [REST API Reference](/api-reference/rest-api/introduction).
   </Accordion>
+  <Accordion title="How do you calculate prices, volumes and market cap?">
+    A price is a volume-weighted average across the markets we track rather than a single exchange's quote, which is why it can differ slightly from any one venue you compare it against.
+
+    Our [price calculation methodology](https://coinpaprika.com/methodology/) documents the pipeline end to end: data sources and scope, the four stages of outlier detection, how exchange confidence scores feed estimated real volume, how circulating supply is established for proof-of-work coins and for smart-contract tokens, and how market cap and all-time highs are derived from those inputs. It also states our listing criteria and how commercial relationships are handled.
+  </Accordion>
   <Accordion title="Are there API clients or SDKs?">
     Yes, we have SDKs for popular programming languages such as Python, PHP, Go, JS/TS, Swift, and Kotlin. You can see the full list in our [Getting Started guide](/api-reference/rest-api/introduction#sdks).
 

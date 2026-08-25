@@ -94,6 +94,12 @@ Our API has the following rate limits based on your subscription plan:
 
 For more details, please see our [pricing page](https://coinpaprika.com/api/pricing).
 
+## How the numbers are calculated
+
+Prices in this API are a volume-weighted average across the markets we track, not a quote copied from a single exchange. Our [price calculation methodology](https://coinpaprika.com/methodology/) documents the whole pipeline: which markets are included, how outliers are detected and removed, how exchange confidence scores adjust reported volume, and how circulating supply, market cap and all-time highs are derived.
+
+Read it if you need to reconcile a `price`, `volume_24h`, `circulating_supply` or `market_cap` value with another source, or if you have to explain to a reviewer where a number came from.
+
 ## SDKs
 
 We offer several SDKs to help you integrate with our API more easily:
