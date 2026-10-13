@@ -95,3 +95,11 @@ a.card,
 
 
 
+
+/* Prev/next footer: Mintlify fixes the next-page description at 18rem, wider
+   than the card when the sidebar and code panel are both open, so it spills
+   over "Previous". Keep it inside the card and let it truncate. */
+#pagination [data-component-part="pagination-description"] {
+  width: 100%;
+  max-width: 100%;
+}
