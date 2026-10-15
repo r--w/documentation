@@ -2,7 +2,7 @@ openapi: 3.1.0
 x-mcp:
   enabled: true
 info:
-  version: 1.7.10
+  version: 1.7.12
   title: Coinpaprika API
   license:
     name: MIT
@@ -1219,6 +1219,94 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/tick'
+        '429':
+          description: too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tooManyRequestsError'
+  /tickers/simple:
+    get:
+      tags:
+        - Tickers
+      summary: Get simplified ticker data for all coins
+      description: |
+        Returns simplified ticker information (`id`, `name`, `symbol`, `rank`, `price`) for all active
+        cryptocurrencies.
+
+        This is a lightweight alternative to `/tickers`: it returns only essential fields,
+        making it ideal for dashboards, watchlists, and high-frequency polling.
+
+        **Available on the following API plans:**
+        - Starter
+        - Pro
+        - Business
+        - Enterprise
+
+        **Update interval:** Every 1 minute.
+
+        **Note:** This endpoint is only available on `api-pro.coinpaprika.com`.
+      x-codeSamples:
+        - lang: cURL
+          label: Paid plans
+          source: |
+            curl --request GET \
+            --url "https://api-pro.coinpaprika.com/v1/tickers/simple?quotes=USD,BTC" \
+            --header "Authorization: $COINPAPRIKA_API_KEY"
+      operationId: getTickersSimple
+      parameters:
+        - $ref: '#/components/parameters/tickers_quotes'
+        - $ref: '#/components/parameters/page'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/simple_tick'
+              example:
+                - id: btc-bitcoin
+                  name: Bitcoin
+                  symbol: BTC
+                  rank: 1
+                  quotes:
+                    USD:
+                      price: 67432.15
+                    BTC:
+                      price: 1.0
+                - id: eth-ethereum
+                  name: Ethereum
+                  symbol: ETH
+                  rank: 2
+                  quotes:
+                    USD:
+                      price: 3521.42
+                    BTC:
+                      price: 0.05224
+        '400':
+          description: invalid parameters (e.g. unsupported quote currency or more than 3 quotes)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                tooManyQuotes:
+                  summary: More than 3 quotes requested
+                  value:
+                    error: Max number of quotes is 3
+                invalidParams:
+                  summary: Unsupported quote currency
+                  value:
+                    error: Invalid parameters
+        '404':
+          description: returned when the endpoint is accessed on a non-pro host
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '404 page not found'
         '429':
           description: too many requests
           content:
@@ -2808,6 +2896,65 @@ components:
           example: '2018-11-14T07:20:41Z'
         quotes:
           $ref: '#/components/schemas/quotes'
+    simple_quote:
+      type: object
+      description: Simplified quote containing only the price.
+      required:
+        - price
+      properties:
+        price:
+          type: number
+          format: double
+          description: Current price in the quote currency.
+          example: 67432.15
+    simple_quotes:
+      type: object
+      description: |
+        Map of quote currency symbol to simplified price data.
+        Keys are the requested quote currency symbols (e.g. "USD", "BTC", "ETH").
+      additionalProperties:
+        $ref: '#/components/schemas/simple_quote'
+      example:
+        USD:
+          price: 67432.15
+    simple_tick:
+      type: object
+      description: Simplified tick response containing only essential fields.
+      required:
+        - id
+        - name
+        - symbol
+        - rank
+        - quotes
+      properties:
+        id:
+          type: string
+          description: Unique coin identifier (slug).
+          example: btc-bitcoin
+        name:
+          type: string
+          description: Coin name.
+          example: Bitcoin
+        symbol:
+          type: string
+          description: Coin ticker symbol.
+          example: BTC
+        rank:
+          type: integer
+          format: int64
+          description: Market rank of the coin.
+          example: 1
+        quotes:
+          $ref: '#/components/schemas/simple_quotes'
+    errorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+          example: Invalid parameters
     historical_tick:
       type: object
       description: Historical tick response.
