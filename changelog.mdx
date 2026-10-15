@@ -3,6 +3,9 @@ title: Changelog
 sidebarTitle: Version history
 ---
 
+## 1.7.13 - 2026.10.15
+- Added `circulating_supply` to `/tickers/{coin_id}/historical` and `/coins/{coin_id}/ohlcv/historical`, `/ohlcv/latest`, `/ohlcv/today`, available on Business, Ultimate and Enterprise (derived as market cap / price, an approximation)
+
 ## 1.7.12 - 2026.03.27
 - Added new `/tickers/simple` endpoint: lightweight ticker data (id, name, symbol, rank, price), available on Starter, Pro, Business and Enterprise
 - Updated ticker update interval from 3 minutes to 1 minute for Starter, Pro, Business, Enterprise plans
