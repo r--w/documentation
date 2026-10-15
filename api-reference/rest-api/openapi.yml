@@ -1236,6 +1236,9 @@ paths:
       tags:
         - Tickers
       summary: Get simplified ticker data for all coins
+      x-mint:
+        metadata:
+          description: "Id, name, symbol, rank and price for every active coin, refreshed every minute. Paid plans only."
       description: |
         Returns simplified ticker information (`id`, `name`, `symbol`, `rank`, `price`) for all active
         cryptocurrencies.
