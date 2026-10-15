@@ -2,7 +2,7 @@ openapi: 3.1.0
 x-mcp:
   enabled: true
 info:
-  version: 1.7.10
+  version: 1.7.13
   title: Coinpaprika API
   license:
     name: MIT
@@ -636,6 +636,8 @@ paths:
       description: |
         Returns all available markets for a given coin.
 
+        On Business, Ultimate and Enterprise plans each entry also includes `circulating_supply`: the circulating supply implied by the entry, calculated as `market_cap / close` in USD (an approximation, not a recorded supply value). The field is omitted on other plans and when market cap or price is missing.
+
         **Available on the following API plans:**
         - Free
         - Starter
@@ -695,6 +697,8 @@ paths:
 
         The candle is built from our aggregated volume-weighted price, not from one exchange's tape, so it need not line up with a single venue's chart. The [price calculation methodology](https://coinpaprika.com/methodology/) explains how that price and the accompanying volume and market cap are computed.
 
+        On Business, Ultimate and Enterprise plans each entry also includes `circulating_supply`: the circulating supply implied by the entry, calculated as `market_cap / close` in USD (an approximation, not a recorded supply value). The field is omitted on other plans and when market cap or price is missing.
+
         **Available on the following API plans:**
         - Free
         - Starter
@@ -753,6 +757,8 @@ paths:
         Returns Open/High/Low/Close values with volume and market capitalization for any date range. If the `end` date is the current day, data can change with every request until actual close of the day at 23:59:59.
 
         Candles are built from our aggregated volume-weighted price rather than one exchange's tape. Before comparing a long range against another source, read the [price calculation methodology](https://coinpaprika.com/methodology/), in particular its algorithm history, which records the changes that affect how older candles compare with recent ones.
+
+        On Business, Ultimate and Enterprise plans each entry also includes `circulating_supply`: the circulating supply implied by the entry, calculated as `market_cap / close` in USD (an approximation, not a recorded supply value). The field is omitted on other plans and when market cap or price is missing.
 
         **Available on the following API plans:**
         - Free
@@ -1225,6 +1231,97 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/tooManyRequestsError'
+  /tickers/simple:
+    get:
+      tags:
+        - Tickers
+      summary: Get simplified ticker data for all coins
+      x-mint:
+        metadata:
+          description: "Id, name, symbol, rank and price for every active coin, refreshed every minute. Paid plans only."
+      description: |
+        Returns simplified ticker information (`id`, `name`, `symbol`, `rank`, `price`) for all active
+        cryptocurrencies.
+
+        This is a lightweight alternative to `/tickers`: it returns only essential fields,
+        making it ideal for dashboards, watchlists, and high-frequency polling.
+
+        **Available on the following API plans:**
+        - Starter
+        - Pro
+        - Business
+        - Enterprise
+
+        **Update interval:** Every 1 minute.
+
+        **Note:** This endpoint is only available on `api-pro.coinpaprika.com`.
+      x-codeSamples:
+        - lang: cURL
+          label: Paid plans
+          source: |
+            curl --request GET \
+            --url "https://api-pro.coinpaprika.com/v1/tickers/simple?quotes=USD,BTC" \
+            --header "Authorization: $COINPAPRIKA_API_KEY"
+      operationId: getTickersSimple
+      parameters:
+        - $ref: '#/components/parameters/tickers_quotes'
+        - $ref: '#/components/parameters/page'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/simple_tick'
+              example:
+                - id: btc-bitcoin
+                  name: Bitcoin
+                  symbol: BTC
+                  rank: 1
+                  quotes:
+                    USD:
+                      price: 67432.15
+                    BTC:
+                      price: 1.0
+                - id: eth-ethereum
+                  name: Ethereum
+                  symbol: ETH
+                  rank: 2
+                  quotes:
+                    USD:
+                      price: 3521.42
+                    BTC:
+                      price: 0.05224
+        '400':
+          description: invalid parameters (e.g. unsupported quote currency or more than 3 quotes)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+              examples:
+                tooManyQuotes:
+                  summary: More than 3 quotes requested
+                  value:
+                    error: Max number of quotes is 3
+                invalidParams:
+                  summary: Unsupported quote currency
+                  value:
+                    error: Invalid parameters
+        '404':
+          description: returned when the endpoint is accessed on a non-pro host
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '404 page not found'
+        '429':
+          description: too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tooManyRequestsError'
   /tickers/{coin_id}:
     get:
       tags:
@@ -1299,7 +1396,9 @@ paths:
         metadata:
           description: "Historical price, 24h volume and market cap for a coin, in USD or BTC, at intervals from 5 minutes to 365 days depending on the plan."
       description: |
-        Returns historical values of `price`, `volume_24h`, `market_cap` for a given cryptocurrency on coinpaprika.com:
+        Returns historical values of `price`, `volume_24h`, `market_cap` for a given cryptocurrency on coinpaprika.com.
+
+        On Business, Ultimate and Enterprise plans each entry also includes `circulating_supply`: the circulating supply implied by the entry, calculated as `market_cap / price` in USD (an approximation, not a recorded supply value). For intervals of `15m` and longer it reflects averaged data. The field is omitted on other plans and when market cap or price is missing.
 
         Each point is produced by the same volume-weighted pipeline as the live ticker. See the [price calculation methodology](https://coinpaprika.com/methodology/) for how markets are selected and outliers removed, and its algorithm history for changes that affect how older points compare with recent ones.
 
@@ -2578,6 +2677,10 @@ components:
           type: integer
           example: 83808161204
           nullable: true
+        circulating_supply:
+          type: integer
+          example: 96087000
+          description: Circulating supply implied by the entry (`market_cap / close` in USD); an approximation, not a recorded supply value. Returned only on Business, Ultimate and Enterprise plans, omitted when market cap or price is missing.
     link_with_followers:
       type: object
       properties:
@@ -2808,6 +2911,65 @@ components:
           example: '2018-11-14T07:20:41Z'
         quotes:
           $ref: '#/components/schemas/quotes'
+    simple_quote:
+      type: object
+      description: Simplified quote containing only the price.
+      required:
+        - price
+      properties:
+        price:
+          type: number
+          format: double
+          description: Current price in the quote currency.
+          example: 67432.15
+    simple_quotes:
+      type: object
+      description: |
+        Map of quote currency symbol to simplified price data.
+        Keys are the requested quote currency symbols (e.g. "USD", "BTC", "ETH").
+      additionalProperties:
+        $ref: '#/components/schemas/simple_quote'
+      example:
+        USD:
+          price: 67432.15
+    simple_tick:
+      type: object
+      description: Simplified tick response containing only essential fields.
+      required:
+        - id
+        - name
+        - symbol
+        - rank
+        - quotes
+      properties:
+        id:
+          type: string
+          description: Unique coin identifier (slug).
+          example: btc-bitcoin
+        name:
+          type: string
+          description: Coin name.
+          example: Bitcoin
+        symbol:
+          type: string
+          description: Coin ticker symbol.
+          example: BTC
+        rank:
+          type: integer
+          format: int64
+          description: Market rank of the coin.
+          example: 1
+        quotes:
+          $ref: '#/components/schemas/simple_quotes'
+    errorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error message.
+          example: Invalid parameters
     historical_tick:
       type: object
       description: Historical tick response.
@@ -2825,6 +2987,10 @@ components:
         market_cap:
           type: integer
           example: 83761787514
+        circulating_supply:
+          type: integer
+          example: 97906000
+          description: Circulating supply implied by the entry (`market_cap / price` in USD); an approximation, not a recorded supply value. Returned only on Business, Ultimate and Enterprise plans, omitted when market cap or price is missing.
     historical_ticks:
       type: array
       description: Historical tick response.
